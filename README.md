@@ -1,5 +1,25 @@
 # elec3300
 
+## progress
+| urgency | difficulty | task | description | done? |
+| --- | --- | --- | --- | --- |
+| - | - | design pcb | | [x] |
+| - | - | solder pcb | | |
+| - | - | mech design | | |
+| 0 | 0 | button | button interrupt | |
+| 0 | 0 | led | led display | |
+| 1 | 1 | motor driver | (car) pwm & direction control | |
+| 1 | 2 | uart | communicate | |
+| 1 | 2 | i2c | communicate | |
+| 1 | 3 | mpu6050 (i2) | port and simplify Adafruit version | |
+| 2 | 4 | ssd1306 lcd (i2) | display line and text (opt) | |
+| 3 | 2 | ws2812b RGB led | display R/G/B first, either bitbang or spi (opt) | |
+| 4 | 1 | vibration motor | (remote) pwm output | |
+| 4 | 2 | 24c02 eeprom (i2) | read and write data | |
+| 4 | ? | encoder | (car) encoder counter | |
+| 5 | 4 | gy530 TOF (i2c) | get distance | |
+
+
 ## car_hw
 
 - see output/schematic.pdf
