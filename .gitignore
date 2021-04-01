@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# remote_sw
+remote_sw/output/*
