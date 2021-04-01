@@ -1,0 +1,89 @@
+03-19 23:05:24 replicate_layout.action_replicate_layout 305:Plugin executed on: 'linux'
+03-19 23:05:24 replicate_layout.action_replicate_layout 306:Plugin executed with python version: '3.8.5 (default, Jan 27 2021, 15:41:15) \n[GCC 9.3.0]'
+03-19 23:05:24 replicate_layout.action_replicate_layout 307:KiCad build version: 5.1.9-73d0e3b20d~88~ubuntu20.04.1
+03-19 23:05:24 replicate_layout.action_replicate_layout 308:Replicate layout plugin version: 70 started
+03-19 23:05:24 replicate_layout.action_replicate_layout 340:Preparing replicator with J7 as a reference
+03-19 23:05:24 replicate_layout.replicatelayout 215:getting project hierarchy from schematics
+03-19 23:05:24 replicate_layout.replicatelayout 217:Project hierarchy looks like:
+{'6057C8EB': ['motor2', '/home/joseph/Documents/elec-car/Motor.sch'], '6057B8BC': ['motor1', '/home/joseph/Documents/elec-car/Motor.sch'], '60571771': ['motor0', '/home/joseph/Documents/elec-car/Motor.sch']}
+03-19 23:05:24 replicate_layout.replicatelayout 225:getting a list of all footprints on board
+03-19 23:05:24 replicate_layout.action_replicate_layout 366:source anchor footprint is 'J7'
+Located on:['motor0']
+With filenames:['Motor.sch']
+With sheet_id:['motor0']
+03-19 23:05:24 replicate_layout.action_replicate_layout 371:Corresponding footprints are 
+[('J7', ['motor0']), ('J5', ['motor1']), ('J3', ['motor2'])]
+03-19 23:05:24 replicate_layout.action_replicate_layout 384:Showing dialog
+03-19 23:05:24 replicate_layout.action_replicate_layout 388:Pcbnew position: wx.Point(72, 27)
+03-19 23:05:24 replicate_layout.action_replicate_layout 394:Display 0: wx.Rect(0, 0, 1920, 1080)
+03-19 23:05:24 replicate_layout.action_replicate_layout 398:Toolbar position: wx.Point(1884, 125)
+03-19 23:05:24 replicate_layout.action_replicate_layout 405:Dialog position: wx.Point(1571, 125)
+03-19 23:05:24 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:'motor0', file:'Motor.sch'
+03-19 23:05:24 replicate_layout.replicatelayout 256:Source sheet path up to the level:['motor0']
+03-19 23:05:24 replicate_layout.replicatelayout 260:Footprints on the sheets:
+['J7', 'J5', 'J3']
+03-19 23:05:24 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+['/60571771/60577D67', '/6057B8BC/60577D67', '/6057C8EB/60577D67']
+03-19 23:05:24 replicate_layout.replicatelayout 279:All sheets to replicate:
+[['motor0'], ['motor1'], ['motor2']]
+03-19 23:05:24 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[['motor0'], ['motor1'], ['motor2']]
+03-19 23:05:24 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[['motor1'], ['motor2']]
+03-19 23:05:26 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:'motor0', file:'Motor.sch'
+03-19 23:05:26 replicate_layout.replicatelayout 256:Source sheet path up to the level:['motor0']
+03-19 23:05:26 replicate_layout.replicatelayout 260:Footprints on the sheets:
+['J7', 'J5', 'J3']
+03-19 23:05:26 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+['/60571771/60577D67', '/6057B8BC/60577D67', '/6057C8EB/60577D67']
+03-19 23:05:26 replicate_layout.replicatelayout 279:All sheets to replicate:
+[['motor0'], ['motor1'], ['motor2']]
+03-19 23:05:26 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[['motor0'], ['motor1'], ['motor2']]
+03-19 23:05:26 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[['motor1'], ['motor2']]
+03-19 23:05:26 replicate_layout.action_replicate_layout 179:Replicating layout
+03-19 23:05:26 replicate_layout.replicatelayout 991:Starting replication of sheets: [['motor1'], ['motor2']]
+on level: ['motor0']
+with tracks=True, zone=True, text=True, containing=True, remove=False, locked=False
+03-19 23:05:26 root 261:updating GUI message: 'Preparing for replication'
+03-19 23:05:26 root 266:updating GUI with: 0
+03-19 23:05:26 replicate_layout.replicatelayout 556:Getting the list of source footprints
+03-19 23:05:26 root 266:updating GUI with: 0
+03-19 23:05:26 replicate_layout.replicatelayout 560:Getting the list of all the remaining footprints
+03-19 23:05:26 replicate_layout.replicatelayout 564:Getting nets local to source footprints
+03-19 23:05:26 replicate_layout.replicatelayout 568:Getting source bounding box
+03-19 23:05:26 root 266:updating GUI with: 37
+03-19 23:05:26 replicate_layout.replicatelayout 572:Getting source tracks
+03-19 23:05:26 replicate_layout.replicatelayout 576:Getting source zones
+03-19 23:05:26 replicate_layout.replicatelayout 580:Getting source text items
+03-19 23:05:26 replicate_layout.replicatelayout 584:Getting source text items
+03-19 23:05:26 root 261:updating GUI message: 'Replicating footprints'
+03-19 23:05:26 replicate_layout.replicatelayout 590:Replicating footprints
+03-19 23:05:26 replicate_layout.replicatelayout 596:Replicating footprints on sheet ['motor1']
+03-19 23:05:26 root 266:updating GUI with: 14
+03-19 23:05:26 root 266:updating GUI with: 41
+03-19 23:05:26 replicate_layout.replicatelayout 596:Replicating footprints on sheet ['motor2']
+03-19 23:05:26 root 266:updating GUI with: 70
+03-19 23:05:26 root 266:updating GUI with: 97
+03-19 23:05:26 root 261:updating GUI message: 'Replicating tracks'
+03-19 23:05:26 replicate_layout.replicatelayout 720:Replicating tracks
+03-19 23:05:26 replicate_layout.replicatelayout 726:Replicating tracks on sheet ['motor1']
+03-19 23:05:26 root 266:updating GUI with: 0
+03-19 23:05:26 replicate_layout.replicatelayout 726:Replicating tracks on sheet ['motor2']
+03-19 23:05:26 root 266:updating GUI with: 50
+03-19 23:05:26 root 261:updating GUI message: 'Replicating zones'
+03-19 23:05:26 replicate_layout.replicatelayout 771:Replicating zones
+03-19 23:05:26 replicate_layout.replicatelayout 778:Replicating zones on sheet ['motor1']
+03-19 23:05:26 root 266:updating GUI with: 50
+03-19 23:05:26 replicate_layout.replicatelayout 778:Replicating zones on sheet ['motor2']
+03-19 23:05:26 root 261:updating GUI message: 'Replicating text'
+03-19 23:05:26 root 266:updating GUI with: 0
+03-19 23:05:26 replicate_layout.replicatelayout 837:Replicating text
+03-19 23:05:26 replicate_layout.replicatelayout 844:Replicating text on sheet ['motor1']
+03-19 23:05:26 replicate_layout.replicatelayout 844:Replicating text on sheet ['motor2']
+03-19 23:05:26 root 261:updating GUI message: 'Replicating drawings'
+03-19 23:05:26 replicate_layout.replicatelayout 868:Replicating drawings
+03-19 23:05:26 replicate_layout.replicatelayout 874:Replicating drawings on sheet ['motor1']
+03-19 23:05:26 replicate_layout.replicatelayout 874:Replicating drawings on sheet ['motor2']
+03-19 23:05:26 replicate_layout.action_replicate_layout 201:Replication complete
