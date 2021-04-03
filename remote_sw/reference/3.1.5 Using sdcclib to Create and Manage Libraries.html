@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>3.1.5 Using sdcclib to Create and Manage Libraries</title>
+<meta name="description" content="3.1.5 Using sdcclib to Create and Manage Libraries">
+<meta name="keywords" content="sdccman">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta name="Generator" content="LaTeX2HTML v2002-2-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/sdccman.css">
+
+<link rel="previous" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node43.html">
+<link rel="up" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node39.html">
+<link rel="next" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node45.html">
+</head>
+
+<body>
+<!--Navigation Panel-->
+<a name="tex2html1209" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node45.html">
+<img alt="next" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/next.png" width="37" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1203" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node39.html">
+<img alt="up" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/up.png" width="26" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1199" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node43.html">
+<img alt="previous" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/prev.png" width="63" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1205" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node1.html">
+<img alt="contents" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/contents.png" width="65" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1207" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node189.html">
+<img alt="index" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/index.png" width="43" height="24" border="0" align="BOTTOM"></a> 
+<br>
+<b> Next:</b> <a name="tex2html1210" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node45.html">3.2 Command Line Options</a>
+<b> Up:</b> <a name="tex2html1204" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node39.html">3.1 Compiling</a>
+<b> Previous:</b> <a name="tex2html1200" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node43.html">3.1.4 Projects with Additional</a>
+ &nbsp; <b>  <a name="tex2html1206" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node1.html">Contents</a></b> 
+ &nbsp; <b>  <a name="tex2html1208" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node189.html">Index</a></b> 
+<br>
+<br>
+<!--End of Navigation Panel-->
+
+<h2><a name="SECTION00415000000000000000"></a><a name="715"></a>
+<br>
+3.1.5 Using sdcclib to Create and Manage Libraries
+</h2>
+
+<p>
+Alternatively, instead of having a .rel file for each entry on the
+library file as described in the preceding section, sdcclib can be
+used to embed all the modules belonging to such library in the library
+file itself. This results in a larger library file, but it greatly
+reduces the number of disk files accessed by the linker.  Additionally,
+the packed library file contains an index of all include modules and
+symbols that significantly speeds up the linking process. To display
+a list of options supported by sdcclib type:
+<br>
+</p><p>
+<i><b>sdcclib -?<a name="716"></a></b></i>
+<br>
+<br>
+To create a new library file, start by compiling all the required
+modules. For example:
+<br>
+</p><p>
+<i><b>sdcc -c _divsint.c</b></i>
+
+</p><p>
+<i><b>sdcc -c _divuint.c</b></i>
+
+</p><p>
+<i><b>sdcc -c _modsint.c</b></i>
+
+</p><p>
+<i><b>sdcc -c _moduint.c</b></i>
+
+</p><p>
+<i><b>sdcc -c _mulint.c</b></i>
+<br>
+</p><p>
+This will create files _divsint.rel, _divuint.rel, _modsint.rel,
+_moduint.rel, and _mulint.rel. The next step is to add the .rel
+files to the library file:
+<br>
+</p><p>
+<i><b>sdcclib libint.lib _divsint.rel</b></i><b><a name="724"></a></b>
+
+</p><p>
+<i><b>sdcclib libint.lib _divuint.rel</b></i>
+
+</p><p>
+<i><b>sdcclib libint.lib _modsint.rel</b></i>
+
+</p><p>
+<i><b>sdcclib libint.lib _moduint.rel</b></i>
+
+</p><p>
+<i><b>sdcclib libint.lib _mulint.rel</b></i>
+<br>
+</p><p>
+Or, if you preffer:
+<br>
+</p><p>
+<i><b>sdcclib libint.lib _divsint.rel _divuint.rel _modsint.rel
+_moduint.rel _mulint.rel</b></i>
+<br>
+</p><p>
+If the file already exists in the library, it will be replaced. If
+a list of .rel files is available, you can tell sdcclib to add those
+files to a library. For example, if the file 'myliblist.txt' contains
+<br>
+</p><p>
+<i><b>_divsint.rel</b></i>
+
+</p><p>
+<i><b>_divuint.rel</b></i>
+
+</p><p>
+<i><b>_modsint.rel</b></i>
+
+</p><p>
+<i><b>_moduint.rel</b></i>
+
+</p><p>
+<i><b>_mulint.rel</b></i>
+<br>
+</p><p>
+Use
+<br>
+</p><p>
+<i><b>sdcclib -l libint.lib myliblist.txt</b></i>
+<br>
+</p><p>
+Additionally, you can instruct sdcclib to compiles the files before
+adding them to the library. This is achieved using the environment
+variables SDCCLIB_CC and/or SDCCLIB_AS. For example:
+<br>
+</p><p>
+<i><b>set SDCCLIB_CC=sdcc -c</b></i>
+
+</p><p>
+<i><b>sdcclib -l libint.lib myliblist.txt</b></i>
+<br>
+</p><p>
+To see what modules and symbols are included in the library, options
+-s and -m are available. For example:
+<br>
+<br><i><b>sdcclib -s libint.lib</b></i><b><a name="743"></a></b>
+<br><tt>_divsint.rel:</tt>
+
+</p><p>
+<tt>__divsint_a_1_1</tt>
+
+</p><p>
+<tt>__divsint_PARM_2</tt>
+
+</p><p>
+<tt>__divsint</tt>&nbsp;
+<br><tt>_divuint.rel:</tt>
+
+</p><p>
+<tt>__divuint_a_1_1</tt>
+
+</p><p>
+<tt>__divuint_PARM_2</tt>
+
+</p><p>
+<tt>__divuint_reste_1_1</tt>
+
+</p><p>
+<tt>__divuint_count_1_1</tt>
+
+</p><p>
+<tt>__divuint</tt>&nbsp;
+<br><tt>_modsint.rel:</tt>
+
+</p><p>
+<tt>__modsint_a_1_1</tt>
+
+</p><p>
+<tt>__modsint_PARM_2</tt>
+
+</p><p>
+<tt>__modsint</tt>&nbsp;
+<br><tt>_moduint.rel:</tt>
+
+</p><p>
+<tt>__moduint_a_1_1</tt>
+
+</p><p>
+<tt>__moduint_PARM_2</tt>
+
+</p><p>
+<tt>__moduint_count_1_1</tt>
+
+</p><p>
+<tt>__moduint</tt>&nbsp;
+<br><tt>_mulint.rel:</tt>
+
+</p><p>
+<tt>__mulint_PARM_2</tt>
+
+</p><p>
+<tt>__mulint</tt>
+<br>
+</p><p>
+If the source files are compiled using --debug<a name="767"></a>,
+the corresponding debug information file .adb will be include in the
+library file as well. The library files created with sdcclib are plain
+text files, so they can be viewed with a text editor. It is not recomended
+to modify a library file created with sdcclib using a text editor,
+as there are file indexes numbers located accross the file used by
+the linker to quickly locate the required module to link. Once a .rel
+file (as well as a .adb file) is added to a library using sdcclib,
+it can be safely deleted, since all the information required for linking
+is embedded in the library file itself. Library files created using
+sdcclib are used as described in the preceding sections.
+</p><p></p><p>
+<br>
+
+
+</p><p>
+</p><hr>
+<!--Navigation Panel-->
+<a name="tex2html1209" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node45.html">
+<img alt="next" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/next.png" width="37" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1203" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node39.html">
+<img alt="up" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/up.png" width="26" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1199" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node43.html">
+<img alt="previous" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/prev.png" width="63" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1205" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node1.html">
+<img alt="contents" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/contents.png" width="65" height="24" border="0" align="BOTTOM"></a> 
+<a name="tex2html1207" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node189.html">
+<img alt="index" src="3.1.5%20Using%20sdcclib%20to%20Create%20and%20Manage%20Libraries_files/index.png" width="43" height="24" border="0" align="BOTTOM"></a> 
+<br>
+<b> Next:</b> <a name="tex2html1210" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node45.html">3.2 Command Line Options</a>
+<b> Up:</b> <a name="tex2html1204" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node39.html">3.1 Compiling</a>
+<b> Previous:</b> <a name="tex2html1200" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node43.html">3.1.4 Projects with Additional</a>
+ &nbsp; <b>  <a name="tex2html1206" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node1.html">Contents</a></b> 
+ &nbsp; <b>  <a name="tex2html1208" href="https://k1.spdns.de/Develop/Hardware/AVR/mixed%20docs.../doc/sdccman.html/node189.html">Index</a></b> 
+<!--End of Navigation Panel-->
+<address>
+
+2008-12-05
+</address>
+
+
+</body></html>
