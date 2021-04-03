@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "stm8s_i2c.h": "c"
+        "stm8s_i2c.h": "c",
+        "ssd1306.h": "c",
+        "main.h": "c",
+        "stm8s.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c"
     }
 }
