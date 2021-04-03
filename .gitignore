@@ -33,3 +33,8 @@
 
 # remote_sw
 remote_sw/output/*
+car_sw/Debug/
+
+car_sw/car_sw Debug.cfg
+
+car_sw/car_sw Debug.launch
