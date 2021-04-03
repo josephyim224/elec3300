@@ -109,6 +109,8 @@ void Error_Handler(void);
 #define M0_ENC_GPIO_Port GPIOA
 #define M2_ENC_Pin GPIO_PIN_4
 #define M2_ENC_GPIO_Port GPIOB
+#define WS2812B_Pin GPIO_PIN_5
+#define WS2812B_GPIO_Port GPIOB
 #define M1_ENC_Pin GPIO_PIN_6
 #define M1_ENC_GPIO_Port GPIOB
 #define LED3_Pin GPIO_PIN_7

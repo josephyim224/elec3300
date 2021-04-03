@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "SSD1306.h"
+#include "WS2812B.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,8 +45,6 @@ ADC_HandleTypeDef hadc1;
 
 I2C_HandleTypeDef hi2c1;
 
-SPI_HandleTypeDef hspi1;
-
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -62,7 +61,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
@@ -106,7 +104,6 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_ADC1_Init();
 	MX_I2C1_Init();
-	MX_SPI1_Init();
 	MX_TIM1_Init();
 	MX_USART2_UART_Init();
 	MX_TIM2_Init();
@@ -120,13 +117,22 @@ int main(void) {
 	drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
 	display();
 
+	uint8_t grb[] = { 0xff, 0x00, 0x00 };
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+		writeRGB(grb);
+
+		grb[2] += 16;
+
+		writeRGB(grb);
+
+		grb[1] += 16;
 		HAL_Delay(1000);
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -246,42 +252,6 @@ static void MX_I2C1_Init(void) {
 	/* USER CODE BEGIN I2C1_Init 2 */
 
 	/* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
- * @brief SPI1 Initialization Function
- * @param None
- * @retval None
- */
-static void MX_SPI1_Init(void) {
-
-	/* USER CODE BEGIN SPI1_Init 0 */
-
-	/* USER CODE END SPI1_Init 0 */
-
-	/* USER CODE BEGIN SPI1_Init 1 */
-
-	/* USER CODE END SPI1_Init 1 */
-	/* SPI1 parameter configuration*/
-	hspi1.Instance = SPI1;
-	hspi1.Init.Mode = SPI_MODE_MASTER;
-	hspi1.Init.Direction = SPI_DIRECTION_1LINE;
-	hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-	hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-	hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-	hspi1.Init.NSS = SPI_NSS_SOFT;
-	hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
-	hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-	hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-	hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-	hspi1.Init.CRCPolynomial = 10;
-	if (HAL_SPI_Init(&hspi1) != HAL_OK) {
-		Error_Handler();
-	}
-	/* USER CODE BEGIN SPI1_Init 2 */
-
-	/* USER CODE END SPI1_Init 2 */
 
 }
 
@@ -540,7 +510,7 @@ static void MX_GPIO_Init(void) {
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOB,
 			M_MODE1_Pin | M_nSLEEP_Pin | M1_ENABLE_Pin | M2_ENABLE_Pin
-					| LED3_Pin, GPIO_PIN_RESET);
+					| WS2812B_Pin | LED3_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA, M0_ENABLE_Pin | M_MODE0_Pin, GPIO_PIN_RESET);
@@ -558,9 +528,10 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : M_MODE1_Pin M1_ENABLE_Pin M2_ENABLE_Pin LED3_Pin */
-	GPIO_InitStruct.Pin =
-			M_MODE1_Pin | M1_ENABLE_Pin | M2_ENABLE_Pin | LED3_Pin;
+	/*Configure GPIO pins : M_MODE1_Pin M1_ENABLE_Pin M2_ENABLE_Pin WS2812B_Pin
+	 LED3_Pin */
+	GPIO_InitStruct.Pin = M_MODE1_Pin | M1_ENABLE_Pin | M2_ENABLE_Pin
+			| WS2812B_Pin | LED3_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
