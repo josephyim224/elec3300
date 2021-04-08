@@ -5,6 +5,7 @@
         "main.h": "c",
         "stm8s.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "stm8s_uart1.h": "c"
     }
 }

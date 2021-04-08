@@ -27,6 +27,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "SSD1306.h"
 
 /**
   * @addtogroup GPIO_Toggle
@@ -42,6 +43,9 @@
 void Delay(uint16_t nCount);
 
 /* Private functions ---------------------------------------------------------*/
+
+void initPeripherals();
+
 /* Public functions ----------------------------------------------------------*/
 
 /**
@@ -51,6 +55,64 @@ void Delay(uint16_t nCount);
   */
 void main(void)
 {
+  initPeripherals();
+
+  ssd1306_begin();
+  drawPixel(10, 10, SSD1306_WHITE);
+  drawPixel(10, 11, SSD1306_BLACK);
+  display();
+
+  while (1)
+  {
+    GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
+    Delay(500000);
+    Delay(500000);
+  }
+}
+
+void initPeripherals()
+{
+  // wait for clock to settle
+  for (uint16_t i = 0; i < 0xffff; ++i)
+    ;
+
+  disableInterrupts();
+
+  // clk init
+  CLK->ICKR = CLK_ICKR_RESET_VALUE;
+  CLK->ECKR = CLK_ECKR_RESET_VALUE;
+  CLK->SWR = CLK_SWR_RESET_VALUE;
+  CLK->SWCR = CLK_SWCR_RESET_VALUE;
+  CLK->CKDIVR = CLK_CKDIVR_RESET_VALUE;
+  CLK->PCKENR1 = CLK_PCKENR1_RESET_VALUE;
+  CLK->PCKENR2 = CLK_PCKENR2_RESET_VALUE;
+  CLK->CSSR = CLK_CSSR_RESET_VALUE;
+  CLK->CCOR = CLK_CCOR_RESET_VALUE;
+  while ((CLK->CCOR & CLK_CCOR_CCOEN) != 0)
+    ;
+  CLK->CCOR = CLK_CCOR_RESET_VALUE;
+  CLK->HSITRIMR = CLK_HSITRIMR_RESET_VALUE;
+  CLK->SWIMCCR = CLK_SWIMCCR_RESET_VALUE;
+  CLK->CKDIVR &= (uint8_t)(~CLK_CKDIVR_HSIDIV);
+  CLK->CKDIVR |= (uint8_t)0;
+
+  // gpio init
+  GPIO_Init(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_IT);
+  GPIO_Init(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_IT);
+  GPIO_Init(LED0_GPIO_PORT, LED0_GPIO_PIN, GPIO_MODE_OUT_PP_LOW_FAST);
+
+  // i2c init
+  I2C_Init(100000, 0xA0, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, 16);
+  I2C_Cmd(ENABLE);
+
+  // uart
+  UART1_DeInit();
+  UART1_Init((uint32_t)9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO,
+             (UART1_SyncMode_TypeDef)(UART1_SYNCMODE_CLOCK_ENABLE | UART1_SYNCMODE_CPOL_LOW | UART1_SYNCMODE_CPHA_MIDDLE | UART1_SYNCMODE_LASTBIT_ENABLE),
+             UART1_MODE_TXRX_ENABLE);
+  UART1_Cmd(DISABLE);
+
+  enableInterrupts();
 }
 
 /**

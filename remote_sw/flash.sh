@@ -33,10 +33,12 @@ sdcclib ./output/user.lib ./output/user/*.rel
 echo
 rm -r output/user
 
-sdcc -lstm8 -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c stm8s_it.c -o output/ 
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c stm8s_it.c -o output/ 
 echo
-sdcc -lstm8 -mstm8 --opt-code-size --std-sdcc99 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -l ./STM8S_StdPeriph_Driver.lib -l ./output/user.lib -I./ -I./STM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 ./main.c -o output/
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -l ./STM8S_StdPeriph_Driver.lib -l ./output/user.lib -I./ -I./STM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 ./main.c -o output/
 echo
-stat ./output/main.ihx
+stat ./output/main.ihx | egrep 'Size'
+packihx ./output/main.ihx > ./output/main.hex
+stat ./output/main.hex | egrep 'Size'
 echo
 stm8flash -c stlinkv2 -p stm8s003f3 -s flash -w ./output/main.ihx
