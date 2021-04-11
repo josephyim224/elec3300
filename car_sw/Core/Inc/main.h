@@ -105,14 +105,14 @@ void Error_Handler(void);
 #define M0_ENABLE_GPIO_Port GPIOA
 #define M_MODE0_Pin GPIO_PIN_12
 #define M_MODE0_GPIO_Port GPIOA
-#define M0_ENC_Pin GPIO_PIN_15
-#define M0_ENC_GPIO_Port GPIOA
+#define M1_ENC_Pin GPIO_PIN_15
+#define M1_ENC_GPIO_Port GPIOA
 #define M2_ENC_Pin GPIO_PIN_4
 #define M2_ENC_GPIO_Port GPIOB
 #define WS2812B_Pin GPIO_PIN_5
 #define WS2812B_GPIO_Port GPIOB
-#define M1_ENC_Pin GPIO_PIN_6
-#define M1_ENC_GPIO_Port GPIOB
+#define M0_ENC_Pin GPIO_PIN_6
+#define M0_ENC_GPIO_Port GPIOB
 #define LED3_Pin GPIO_PIN_7
 #define LED3_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

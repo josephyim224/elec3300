@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "SSD1306.h"
 #include "WS2812B.h"
 /* USER CODE END Includes */
@@ -112,26 +113,61 @@ int main(void) {
 	/* USER CODE BEGIN 2 */
 
 	ssd1306_begin(&hi2c1);
-
-	uint8_t c[] = "< hello >";
-	drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-	display();
+	clearDisplay();
 
 	uint8_t grb[] = { 0xff, 0x00, 0x00 };
+
+	HAL_GPIO_WritePin(M_nSLEEP_GPIO_Port, M_nSLEEP_Pin, SET);
+	HAL_GPIO_WritePin(M_MODE1_GPIO_Port, M_MODE1_Pin, RESET);
+
+	HAL_GPIO_WritePin(M0_PHASE_GPIO_Port, M0_PHASE_Pin, SET);
+	HAL_GPIO_WritePin(M1_PHASE_GPIO_Port, M1_PHASE_Pin, SET);
+	HAL_GPIO_WritePin(M2_PHASE_GPIO_Port, M2_PHASE_Pin, SET);
+
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+
+	HAL_TIM_Base_Start(&htim2);
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim4);
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-		writeRGB(grb);
+//		HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+//		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+//		HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+
+//		writeRGB(grb);
+//		writeRGB(grb);
+//		writeRGB(grb);
+//		writeRGB(grb);
+//		writeRGB(grb);
+//		writeRGB(grb);
 
 		grb[2] += 16;
-
-		writeRGB(grb);
-
 		grb[1] += 16;
-		HAL_Delay(1000);
+
+		uint8_t c[20];
+
+		unsigned int t2 = __HAL_TIM_GET_COUNTER(&htim2);
+		sprintf(c, "%6u", t2);
+		drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+
+		unsigned int t3 = __HAL_TIM_GET_COUNTER(&htim3);
+		sprintf(c, "%6u", t3);
+		drawString(0, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+
+		unsigned int t4 = __HAL_TIM_GET_COUNTER(&htim4);
+		sprintf(c, "%6u", t4);
+		drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+		display();
+
+		HAL_Delay(500);
 
 		/* USER CODE END WHILE */
 
@@ -266,6 +302,7 @@ static void MX_TIM1_Init(void) {
 
 	/* USER CODE END TIM1_Init 0 */
 
+	TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
 	TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 	TIM_OC_InitTypeDef sConfigOC = { 0 };
 	TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = { 0 };
@@ -274,12 +311,19 @@ static void MX_TIM1_Init(void) {
 
 	/* USER CODE END TIM1_Init 1 */
 	htim1.Instance = TIM1;
-	htim1.Init.Prescaler = 0;
+	htim1.Init.Prescaler = 71;
 	htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim1.Init.Period = 65535;
+	htim1.Init.Period = 1000;
 	htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim1.Init.RepetitionCounter = 0;
-	htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+	if (HAL_TIM_Base_Init(&htim1) != HAL_OK) {
+		Error_Handler();
+	}
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+	if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK) {
+		Error_Handler();
+	}
 	if (HAL_TIM_PWM_Init(&htim1) != HAL_OK) {
 		Error_Handler();
 	}
@@ -290,21 +334,21 @@ static void MX_TIM1_Init(void) {
 		Error_Handler();
 	}
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = 0;
+	sConfigOC.Pulse = 500;
 	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
 	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
 	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
 	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1)
-			!= HAL_OK) {
-		Error_Handler();
-	}
 	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2)
 			!= HAL_OK) {
 		Error_Handler();
 	}
 	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3)
+			!= HAL_OK) {
+		Error_Handler();
+	}
+	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4)
 			!= HAL_OK) {
 		Error_Handler();
 	}
@@ -337,7 +381,7 @@ static void MX_TIM2_Init(void) {
 
 	/* USER CODE END TIM2_Init 0 */
 
-	TIM_SlaveConfigTypeDef sSlaveConfig = { 0 };
+	TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
 	TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
 	/* USER CODE BEGIN TIM2_Init 1 */
@@ -352,10 +396,11 @@ static void MX_TIM2_Init(void) {
 	if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
 		Error_Handler();
 	}
-	sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
-	sSlaveConfig.InputTrigger = TIM_TS_TI1F_ED;
-	sSlaveConfig.TriggerFilter = 0;
-	if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK) {
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
+	sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
+	sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+	sClockSourceConfig.ClockFilter = 0;
+	if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK) {
 		Error_Handler();
 	}
 	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
@@ -441,8 +486,9 @@ static void MX_TIM4_Init(void) {
 	if (HAL_TIM_Base_Init(&htim4) != HAL_OK) {
 		Error_Handler();
 	}
-	sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
-	sSlaveConfig.InputTrigger = TIM_TS_TI1F_ED;
+	sSlaveConfig.SlaveMode = TIM_SLAVEMODE_EXTERNAL1;
+	sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
+	sSlaveConfig.TriggerPolarity = TIM_TRIGGERPOLARITY_RISING;
 	sSlaveConfig.TriggerFilter = 0;
 	if (HAL_TIM_SlaveConfigSynchro(&htim4, &sSlaveConfig) != HAL_OK) {
 		Error_Handler();
@@ -509,11 +555,13 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOB,
-			M_MODE1_Pin | M_nSLEEP_Pin | M1_ENABLE_Pin | M2_ENABLE_Pin
-					| WS2812B_Pin | LED3_Pin, GPIO_PIN_RESET);
+			M_MODE1_Pin | M_nSLEEP_Pin | WS2812B_Pin | LED3_Pin,
+			GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, M0_ENABLE_Pin | M_MODE0_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,
+			M1_PHASE_Pin | M2_PHASE_Pin | M0_PHASE_Pin | M_MODE0_Pin,
+			GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : LED2_Pin LED1_Pin LED0_Pin */
 	GPIO_InitStruct.Pin = LED2_Pin | LED1_Pin | LED0_Pin;
@@ -528,10 +576,8 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : M_MODE1_Pin M1_ENABLE_Pin M2_ENABLE_Pin WS2812B_Pin
-	 LED3_Pin */
-	GPIO_InitStruct.Pin = M_MODE1_Pin | M1_ENABLE_Pin | M2_ENABLE_Pin
-			| WS2812B_Pin | LED3_Pin;
+	/*Configure GPIO pins : M_MODE1_Pin WS2812B_Pin LED3_Pin */
+	GPIO_InitStruct.Pin = M_MODE1_Pin | WS2812B_Pin | LED3_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -544,8 +590,9 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(M_nSLEEP_GPIO_Port, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : M0_ENABLE_Pin M_MODE0_Pin */
-	GPIO_InitStruct.Pin = M0_ENABLE_Pin | M_MODE0_Pin;
+	/*Configure GPIO pins : M1_PHASE_Pin M2_PHASE_Pin M0_PHASE_Pin M_MODE0_Pin */
+	GPIO_InitStruct.Pin = M1_PHASE_Pin | M2_PHASE_Pin | M0_PHASE_Pin
+			| M_MODE0_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -581,8 +628,8 @@ void Error_Handler(void) {
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	/* User can add his own implementation to report the file name and line number,
+	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
