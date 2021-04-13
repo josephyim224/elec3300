@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "SSD1306.h"
 #include "WS2812B.h"
+#include "MPU6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,22 +116,15 @@ int main(void) {
 	ssd1306_begin(&hi2c1);
 	clearDisplay();
 
+	mpu6050_begin(&hi2c1);
+
+	drv8801_begin(htim1, htim2, htim3, htim4);
+
 	uint8_t grb[] = { 0xff, 0x00, 0x00 };
 
-	HAL_GPIO_WritePin(M_nSLEEP_GPIO_Port, M_nSLEEP_Pin, SET);
-	HAL_GPIO_WritePin(M_MODE1_GPIO_Port, M_MODE1_Pin, RESET);
-
-	HAL_GPIO_WritePin(M0_PHASE_GPIO_Port, M0_PHASE_Pin, SET);
-	HAL_GPIO_WritePin(M1_PHASE_GPIO_Port, M1_PHASE_Pin, SET);
-	HAL_GPIO_WritePin(M2_PHASE_GPIO_Port, M2_PHASE_Pin, SET);
-
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-
-	HAL_TIM_Base_Start(&htim2);
-	HAL_TIM_Base_Start(&htim3);
-	HAL_TIM_Base_Start(&htim4);
+	setPower(0, 500);
+	setPower(1, 500);
+	setPower(2, 500);
 
 	/* USER CODE END 2 */
 
@@ -555,13 +549,11 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOB,
-			M_MODE1_Pin | M_nSLEEP_Pin | WS2812B_Pin | LED3_Pin,
-			GPIO_PIN_RESET);
+	M_MODE1_Pin | M_nSLEEP_Pin | WS2812B_Pin | LED3_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA,
-			M1_PHASE_Pin | M2_PHASE_Pin | M0_PHASE_Pin | M_MODE0_Pin,
-			GPIO_PIN_RESET);
+	M1_PHASE_Pin | M2_PHASE_Pin | M0_PHASE_Pin | M_MODE0_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : LED2_Pin LED1_Pin LED0_Pin */
 	GPIO_InitStruct.Pin = LED2_Pin | LED1_Pin | LED0_Pin;
