@@ -72,10 +72,6 @@ void setPower(uint8_t id, uint32_t power) {
 		power = 1000;
 	}
 
-	/*
-	 * Channel 2 and 3 are using complementary output
-	 */
-
 	switch (id) {
 	case 0:
 		drv8801.m_tim->Instance->CCR4 = power;
@@ -90,7 +86,7 @@ void setPower(uint8_t id, uint32_t power) {
 }
 
 uint32_t getCount(uint8_t id) {
-	uint32_t v;
+	volatile uint32_t v;
 	switch (id) {
 	case 0:
 		v = __HAL_TIM_GET_COUNTER(drv8801.m0_tim);
