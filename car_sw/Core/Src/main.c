@@ -117,14 +117,43 @@ int main(void) {
 	clearDisplay();
 
 	mpu6050_begin(&hi2c1);
-
-	drv8801_begin(htim1, htim2, htim3, htim4);
+	drv8801_begin(&htim1, &htim2, &htim3, &htim4);
 
 	uint8_t grb[] = { 0xff, 0x00, 0x00 };
 
-	setPower(0, 500);
-	setPower(1, 500);
-	setPower(2, 500);
+	setPower(0, 700);
+	setPower(1, 700);
+	setPower(2, 700);
+
+	{
+		setDirection(0, 0);
+		setDirection(1, 0);
+		setDirection(2, 0);
+		HAL_Delay(2000);
+	}
+	{
+		setDirection(0, 1);
+		setDirection(1, 1);
+		setDirection(2, 1);
+		HAL_Delay(2000);
+	}
+
+	{
+		setPower(0, 0);
+		setDirection(1, 0);
+		setDirection(2, 1);
+		HAL_Delay(2000);
+	}
+	{
+		setPower(0, 0);
+		setDirection(1, 1);
+		setDirection(2, 0);
+		HAL_Delay(2000);
+	}
+
+	setPower(0, 0);
+	setPower(1, 0);
+	setPower(2, 0);
 
 	/* USER CODE END 2 */
 
@@ -146,20 +175,20 @@ int main(void) {
 		grb[2] += 16;
 		grb[1] += 16;
 
-		uint8_t c[20];
-
-		unsigned int t2 = __HAL_TIM_GET_COUNTER(&htim2);
-		sprintf(c, "%6u", t2);
-		drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-
-		unsigned int t3 = __HAL_TIM_GET_COUNTER(&htim3);
-		sprintf(c, "%6u", t3);
-		drawString(0, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-
-		unsigned int t4 = __HAL_TIM_GET_COUNTER(&htim4);
-		sprintf(c, "%6u", t4);
-		drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-		display();
+//		uint8_t c[20];
+//
+//		unsigned int t2 = __HAL_TIM_GET_COUNTER(&htim2);
+//		sprintf(c, "%6u", t2);
+//		drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+//
+//		unsigned int t3 = __HAL_TIM_GET_COUNTER(&htim3);
+//		sprintf(c, "%6u", t3);
+//		drawString(0, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+//
+//		unsigned int t4 = __HAL_TIM_GET_COUNTER(&htim4);
+//		sprintf(c, "%6u", t4);
+//		drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+//		display();
 
 		HAL_Delay(500);
 

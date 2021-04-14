@@ -81,11 +81,9 @@ void setPower(uint8_t id, uint32_t power) {
 		drv8801.m_tim->Instance->CCR4 = power;
 		break;
 	case 1:
-		power = 1000 - power;
 		drv8801.m_tim->Instance->CCR2 = power;
 		break;
 	case 2:
-		power = 1000 - power;
 		drv8801.m_tim->Instance->CCR3 = power;
 		break;
 	}
