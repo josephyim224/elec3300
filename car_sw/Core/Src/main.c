@@ -121,38 +121,44 @@ int main(void) {
 
 	uint8_t grb[] = { 0xff, 0x00, 0x00 };
 
+	/* motor test code */
+	if (0) {
+		setPower(0, 1000);
+		setPower(1, 1000);
+		setPower(2, 1000);
+
+		{
+			setDirection(0, 0);
+			setDirection(1, 0);
+			setDirection(2, 0);
+			HAL_Delay(2000);
+		}
+		{
+			setDirection(0, 1);
+			setDirection(1, 1);
+			setDirection(2, 1);
+			HAL_Delay(2000);
+		}
+
+		{
+			setPower(0, 0);
+			setDirection(1, 0);
+			setDirection(2, 1);
+			HAL_Delay(2000);
+		}
+		{
+			setPower(0, 0);
+			setDirection(1, 1);
+			setDirection(2, 0);
+			HAL_Delay(2000);
+		}
+	}
+
+	setDirection(0, 0);
+	setDirection(1, 1);
+
 	setPower(0, 700);
 	setPower(1, 700);
-	setPower(2, 700);
-
-	{
-		setDirection(0, 0);
-		setDirection(1, 0);
-		setDirection(2, 0);
-		HAL_Delay(2000);
-	}
-	{
-		setDirection(0, 1);
-		setDirection(1, 1);
-		setDirection(2, 1);
-		HAL_Delay(2000);
-	}
-
-	{
-		setPower(0, 0);
-		setDirection(1, 0);
-		setDirection(2, 1);
-		HAL_Delay(2000);
-	}
-	{
-		setPower(0, 0);
-		setDirection(1, 1);
-		setDirection(2, 0);
-		HAL_Delay(2000);
-	}
-
-	setPower(0, 0);
-	setPower(1, 0);
 	setPower(2, 0);
 
 	/* USER CODE END 2 */
@@ -175,22 +181,31 @@ int main(void) {
 		grb[2] += 16;
 		grb[1] += 16;
 
-//		uint8_t c[20];
-//
-//		unsigned int t2 = __HAL_TIM_GET_COUNTER(&htim2);
-//		sprintf(c, "%6u", t2);
-//		drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-//
-//		unsigned int t3 = __HAL_TIM_GET_COUNTER(&htim3);
-//		sprintf(c, "%6u", t3);
-//		drawString(0, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-//
-//		unsigned int t4 = __HAL_TIM_GET_COUNTER(&htim4);
-//		sprintf(c, "%6u", t4);
-//		drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
-//		display();
+		mpu6050_readData();
 
-		HAL_Delay(500);
+		uint8_t c[20];
+
+		clearDisplay();
+
+		sprintf(c, "%6f", mpu6050.accX);
+		drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+
+		sprintf(c, "%6f", mpu6050.accY);
+		drawString(0, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+
+		sprintf(c, "%6f", mpu6050.accZ);
+		drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+		display();
+
+		if (HAL_GetTick() % 2000 > 1000) {
+			setDirection(0, 1);
+			setDirection(1, 0);
+		} else {
+			setDirection(0, 0);
+			setDirection(1, 1);
+		}
+
+		HAL_Delay(1000);
 
 		/* USER CODE END WHILE */
 

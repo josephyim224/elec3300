@@ -12,8 +12,6 @@
 
 #include "main.h"
 
-#define SSD1306_128_32 ///< DEPRECATED: old way to specify 128x32 screen
-
 /// fit into the SSD1306_ naming scheme
 #define SSD1306_BLACK 0   ///< Draw 'off' pixels
 #define SSD1306_WHITE 1   ///< Draw 'on' pixels

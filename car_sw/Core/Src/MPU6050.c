@@ -14,13 +14,16 @@
 #include "MPU6050.h"
 
 void mpu6050_read(uint8_t addr, uint8_t *d, uint8_t n) {
-	HAL_I2C_Mem_Read(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, addr, 1, d, n,
+	HAL_I2C_Master_Transmit(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, &addr, 1,
 			1000);
+	HAL_I2C_Master_Receive(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, d, n, 1000);
 }
 
 void mpu6050_write(uint8_t addr, uint8_t *d, uint8_t n) {
-	HAL_I2C_Mem_Write(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, addr, 1, d, n,
-			1000);
+	uint8_t v[2];
+	v[0] = addr;
+	v[1] = *d;
+	HAL_I2C_Master_Transmit(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, v, 2, 1000);
 }
 
 void mpu6050_delay(uint32_t delay) {
@@ -39,14 +42,20 @@ void mpu6050_delay(uint32_t delay) {
  */
 uint8_t mpu6050_begin(I2C_HandleTypeDef *MPU1306_hi2c) {
 	mpu6050.i2caddr = MPU6050_I2CADDR_DEFAULT;
+	mpu6050.i2caddr = 0xD0 | 0x00; // 0x02
 	mpu6050.MPU6050_hi2c = MPU1306_hi2c;
+
+	if (HAL_I2C_IsDeviceReady(mpu6050.MPU6050_hi2c, mpu6050.i2caddr, 2, 5)
+			!= HAL_OK) {
+		return 0;
+	}
 
 	uint8_t who_am_i = 0;
 	mpu6050_read(MPU6050_WHO_AM_I, &who_am_i, 1);
 
 	// make sure we're talking to the right chip
 	if (who_am_i != MPU6050_DEVICE_ID) {
-		return false;
+		return 0;
 	}
 
 	mpu6050_reset();
@@ -55,7 +64,7 @@ uint8_t mpu6050_begin(I2C_HandleTypeDef *MPU1306_hi2c) {
 	setGyroRange(MPU6050_RANGE_500_DEG);
 	setAccelerometerRange(MPU6050_RANGE_2_G); // already the default
 
-	uint8_t power_mgmt_1 = 0x01;
+	uint8_t power_mgmt_1 = 0x00;
 	mpu6050_write(MPU6050_PWR_MGMT_1, &power_mgmt_1, 1);
 
 	mpu6050_delay(100);
@@ -78,7 +87,7 @@ void mpu6050_reset(void) {
 	do {
 		mpu6050_delay(1);
 		mpu6050_read(MPU6050_PWR_MGMT_1, &power_mgmt_1, 1);
-	} while ((power_mgmt_1 & 0b1000000) != 0);
+	} while ((power_mgmt_1 & 0b10000000) != 0);
 	mpu6050_delay(100);
 
 	uint8_t sig_path_reset = 0x7;
