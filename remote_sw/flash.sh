@@ -27,20 +27,23 @@ fi
 
 # compile user library
 mkdir output/user
-sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/SSD1306.c -o output/user/
-echo
 sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/softi2c.c -o output/user/
 echo
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/SSD1306.c -o output/user/
+echo
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/MPU6050.c -o output/user/
+echo
+
 sdcclib ./output/user.lib ./output/user/*.rel
 echo
 rm -r output/user
 
-sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c stm8s_it.c -o output/ 
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c stm8s_it.c -o output/
 echo
 sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -l ./STM8S_StdPeriph_Driver.lib -l ./output/user.lib -I./ -I./STM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 ./main.c -o output/
 echo
 stat ./output/main.ihx | egrep 'Size'
-packihx ./output/main.ihx > ./output/main.hex
+packihx ./output/main.ihx >./output/main.hex
 stat ./output/main.hex | egrep 'Size'
 echo
 stm8flash -c stlinkv2 -p stm8s003f3 -s flash -w ./output/main.ihx

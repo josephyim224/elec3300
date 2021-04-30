@@ -162,14 +162,11 @@ uint8_t eeI2C_Read(uint8_t v_ackOption_u8)
 
     SCL_PIN_LOW; // Clear SCL to complete the Clock
   }
-  if (v_ackOption_u8 == 1) /*Send the Ack/NoAck depending on the user option*/
-  {
+  
+  if (v_ackOption_u8) /*Send the Ack/NoAck depending on the user option*/
     i2c_Ack();
-  }
   else
-  {
     i2c_NoAck();
-  }
 
   return v_i2cData_u8; // Finally return the received Byte*
 }
@@ -203,8 +200,8 @@ pulse on SDA after receiving a byte.
 ***************************************************************************************************/
 static void i2c_Ack(void)
 {
-  SDA_PIN_LOW;  //Pull SDA low to indicate Positive ACK
-  i2c_Clock();  //Generate the Clock
+  SDA_PIN_LOW;  // Pull SDA low to indicate Positive ACK
+  i2c_Clock();  // Generate the Clock
   SDA_PIN_HIGH; // Pull SDA back to High(IDLE state)
 }
 
@@ -218,7 +215,7 @@ pulse on SDA after receiving all bytes.
 ***************************************************************************************************/
 static void i2c_NoAck(void)
 {
-  SDA_PIN_HIGH; //Pull SDA high to indicate Negative/NO ACK
+  SDA_PIN_HIGH; // Pull SDA high to indicate Negative/NO ACK
   i2c_Clock();  // Generate the Clock
   SCL_PIN_HIGH; // Set SCL
 }

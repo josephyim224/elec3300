@@ -28,6 +28,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "SSD1306.h"
+#include "MPU6050.h"
 
 /**
   * @addtogroup GPIO_Toggle
@@ -39,6 +40,7 @@
 /* Evalboard I/Os configuration */
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern struct MPU6050 mpu6050;
 /* Private function prototypes -----------------------------------------------*/
 void Delay(uint16_t nCount);
 
@@ -56,25 +58,65 @@ void initPeripherals();
 void main(void)
 {
   initPeripherals();
-
-  ssd1306_begin();
-  clearDisplay();
-  drawChar(0, 0, 'H', SSD1306_WHITE, SSD1306_BLACK);
-  drawChar(116, 24, 'H', SSD1306_WHITE, SSD1306_BLACK);
-  drawChar(116, 0, 'H', SSD1306_WHITE, SSD1306_BLACK);
-  drawChar(0, 24, 'H', SSD1306_WHITE, SSD1306_BLACK);
-  drawPixel(10, 10, SSD1306_WHITE);
-  drawPixel(10, 11, SSD1306_BLACK);
-  display();
-
+  
+  uint8_t tick = 0;
   while (1)
   {
+    // tick+=1;
+
     GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
     Delay(500000);
     Delay(500000);
 
-    drawPixel(1, 1, SSD1306_WHITE);
-    drawPixel(2, 2, SSD1306_BLACK);
+    uint8_t c[8];
+
+    mpu6050_readData();
+    clearDisplay();
+    drawPixel(10, 10, SSD1306_WHITE);
+
+    int16_t t = mpu6050.rawAccX;
+    for (uint8_t i = 7; i > 0; --i)
+    {
+      switch (t % 10)
+      {
+      case 0:
+        c[i] = '0';
+        break;
+      case 1:
+        c[i] = '1';
+        break;
+      case 2:
+        c[i] = '2';
+        break;
+      case 3:
+        c[i] = '3';
+        break;
+      case 4:
+        c[i] = '4';
+        break;
+      case 5:
+        c[i] = '5';
+        break;
+      case 6:
+        c[i] = '6';
+        break;
+      case 7:
+        c[i] = '7';
+        break;
+      case 8:
+        c[i] = '8';
+        break;
+      case 9:
+        c[i] = '9';
+        break;
+      default:
+        break;
+      }
+
+      t = t / 10;
+    }
+    drawString(0, 0, c, 8, SSD1306_WHITE, SSD1306_BLACK);
+
     display();
   }
 }
@@ -120,6 +162,13 @@ void initPeripherals()
              (UART1_SyncMode_TypeDef)(UART1_SYNCMODE_CLOCK_ENABLE | UART1_SYNCMODE_CPOL_LOW | UART1_SYNCMODE_CPHA_MIDDLE | UART1_SYNCMODE_LASTBIT_ENABLE),
              UART1_MODE_TXRX_ENABLE);
   UART1_Cmd(DISABLE);
+
+  // ssd1306
+  ssd1306_begin();
+  clearDisplay();
+
+  // mpu6050
+  mpu6050_begin();
 
   enableInterrupts();
 }

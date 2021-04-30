@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "stm8s.h": "c",
-        "ssd1306.h": "c"
+        "ssd1306.h": "c",
+        "mpu6050.h": "c",
+        "softi2c.h": "c"
     }
 }

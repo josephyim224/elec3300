@@ -23,43 +23,43 @@ static uint8_t buffer[SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8)];
 
 void ssd1306_command1(uint8_t c)
 {
-  eeI2C_Start();
-  eeI2C_Write(SSD1306_ADDR & 0b11111110);
-  eeI2C_Write(0x80);
-  eeI2C_Write(c);
-  eeI2C_Stop();
+	eeI2C_Start();
+	eeI2C_Write(SSD1306_ADDR & 0b11111110);
+	eeI2C_Write(0x00);
+	eeI2C_Write(c);
+	eeI2C_Stop();
 }
 
 // Issue list of commands to SSD1306, same rules as above re: transactions.
 // This is a private function, not exposed.
 void ssd1306_commandList(const uint8_t *c, uint8_t n)
 {
-  eeI2C_Start();
-  eeI2C_Write(SSD1306_ADDR & 0b11111110);
-  eeI2C_Write(0x00);
-  for (uint8_t i = 0; i < n; ++i) eeI2C_Write(c[i]);
-  eeI2C_Stop();
+	eeI2C_Start();
+	eeI2C_Write(SSD1306_ADDR & 0b11111110);
+	eeI2C_Write(0x00);
+	for (uint8_t i = 0; i < n; ++i)
+		eeI2C_Write(c[i]);
+	eeI2C_Stop();
 }
 
 // REFRESH DISPLAY ---------------------------------------------------------
 
 void display(void)
 {
-  const uint8_t dlist1[] = {
-    SSD1306_PAGEADDR, 0,  // Page start address
-    0xFF,         // Page end (not really, but works here)
-    SSD1306_COLUMNADDR, 0
-  }; // Column start address
-  ssd1306_commandList(dlist1, 5);
-  ssd1306_command1(SSD1306_WIDTH - 1); // Column end address
+	const uint8_t dlist1[] = {
+		SSD1306_PAGEADDR, 0,	// Page start address
+		0xFF,					// Page end (not really, but works here)
+		SSD1306_COLUMNADDR, 0}; // Column start address
+	ssd1306_commandList(dlist1, 5);
+	ssd1306_command1(SSD1306_WIDTH - 1); // Column end address
 
-  eeI2C_Start();
-  eeI2C_Write(SSD1306_ADDR & 0b11111110);
-  eeI2C_Write(0x40);
-  const uint16_t count = SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8);
-  for (uint16_t i = 0; i < count; ++i)
-    eeI2C_Write(buffer[i]);
-  eeI2C_Stop();
+	eeI2C_Start();
+	eeI2C_Write(SSD1306_ADDR & 0b11111110);
+	eeI2C_Write(0x40);
+	const uint16_t count = SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8);
+	for (uint16_t i = 0; i < count; ++i)
+		eeI2C_Write(buffer[i]);
+	eeI2C_Stop();
 }
 
 // ALLOCATE & INIT DISPLAY -------------------------------------------------

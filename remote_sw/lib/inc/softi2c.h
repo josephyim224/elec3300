@@ -56,11 +56,12 @@
 #define SDA_PIN GPIO_ReadInputPin(SDA_GPIO_PORT, SDA_GPIO_PIN)
 #define SCL_PIN GPIO_ReadInputPin(SCL_GPIO_PORT, SCL_GPIO_PIN)
 
-#define DELAY_us(n) { \
-  uint8_t nCount = 5; \
-  while (nCount != 0) \
-    nCount--; \
-}
+#define DELAY_us(n)     \
+  {                     \
+    uint8_t nCount = 30; \
+    while (nCount != 0) \
+      nCount--;         \
+  }
 
 /**************************************************************************************************/
 
