@@ -56,16 +56,16 @@
 #define SSD1306_WIDTH 128
 #define SSD1306_HEIGHT 32
 
-#define SSD1306_ADDR 0x3C
+#define SSD1306_ADDR (0x3C << 1)
 
 void ssd1306_begin();
 void display(void);
 void clearDisplay(void);
-void drawPixel(int16_t x, int16_t y, uint16_t color);
+void drawPixel(const uint8_t x, const uint8_t y, const uint8_t color);
 void ssd1306_command1(uint8_t c);
 void ssd1306_commandList(const uint8_t *c, uint8_t n);
 
-// void drawChar(int16_t x, int16_t y, uint8_t c, uint16_t color, uint16_t bg);
-// void drawString(int16_t x, int16_t y, uint8_t *c, uint8_t n, uint16_t color, uint16_t bg);
+void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg);
+void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint8_t bg);
 
 #endif /* INC_SSD1306_H_ */

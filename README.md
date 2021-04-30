@@ -10,9 +10,9 @@
 | 0 | 0 | led | led display | v |
 | 1 | 1 | motor driver | (car) pwm & direction control | v |
 | 1 | 2 | uart | communicate | |
-| 1 | 2 | i2c | communicate | car(v) |
+| 1 | 2 | i2c | communicate | car(v), remote(v) |
 | 1 | 3 | mpu6050 (i2c) | port and simplify Adafruit version | car(v) |
-| 2 | 4 | ssd1306 lcd (i2c) | display line and text (opt) | car(v), remote() |
+| 2 | 4 | ssd1306 lcd (i2c) | display line and text (opt) | car(v), remote(v) |
 | 3 | 2 | ws2812b RGB led | display R/G/B first, either bitbang or spi (opt) | car(v), remote(v) |
 | 4 | 1 | vibration motor | (remote) pwm output | |
 | 4 | 2 | 24c02 eeprom (i2c) | read and write data | |

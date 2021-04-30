@@ -12,4 +12,10 @@
 #define SIDE_BUTTON_GPIO_PORT (GPIOA)
 #define SIDE_BUTTON_GPIO_PIN (GPIO_PIN_3)
 
+#define SCL_GPIO_PORT (GPIOB)
+#define SCL_GPIO_PIN (GPIO_PIN_4)
+
+#define SDA_GPIO_PORT (GPIOB)
+#define SDA_GPIO_PIN (GPIO_PIN_5)
+
 #endif

@@ -29,6 +29,8 @@ fi
 mkdir output/user
 sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/SSD1306.c -o output/user/
 echo
+sdcc -mstm8 --opt-code-size --std-sdcc11 --nogcse --all-callee-saves --debug --verbose --stack-auto --fverbose-asm --float-reent --no-peep -I./ -ISTM8S_StdPeriph_Driver/inc -Ilib/inc -D STM8S003 -c lib/src/softi2c.c -o output/user/
+echo
 sdcclib ./output/user.lib ./output/user/*.rel
 echo
 rm -r output/user

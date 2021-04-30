@@ -10,8 +10,8 @@
  */
 
 #include "stm8s.h"
-
 #include "SSD1306.h"
+#include "softi2c.h"
 
 static uint8_t buffer[SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8)];
 
@@ -23,59 +23,43 @@ static uint8_t buffer[SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8)];
 
 void ssd1306_command1(uint8_t c)
 {
-	I2C_GenerateSTART(ENABLE);
-	volatile uint8_t dummy = I2C->SR1;
-
-	I2C_Send7bitAddress(SSD1306_ADDR, I2C_DIRECTION_TX);
-	dummy = I2C->SR1;
-	dummy = I2C->SR3;
-
-	I2C_SendData((uint8_t)0x00);
-	I2C_SendData(c);
-	I2C_GenerateSTOP(ENABLE);
+  eeI2C_Start();
+  eeI2C_Write(SSD1306_ADDR & 0b11111110);
+  eeI2C_Write(0x80);
+  eeI2C_Write(c);
+  eeI2C_Stop();
 }
 
 // Issue list of commands to SSD1306, same rules as above re: transactions.
 // This is a private function, not exposed.
 void ssd1306_commandList(const uint8_t *c, uint8_t n)
 {
-	I2C_GenerateSTART(ENABLE);
-	volatile uint8_t dummy = I2C->SR1;
-
-	I2C_Send7bitAddress(SSD1306_ADDR, I2C_DIRECTION_TX);
-	dummy = I2C->SR1;
-	dummy = I2C->SR3;
-
-	I2C_SendData((uint8_t)0x00);
-
-	for (int i = 0; i < n; ++i)
-		I2C_SendData(c[i]);
-	I2C_GenerateSTOP(ENABLE);
+  eeI2C_Start();
+  eeI2C_Write(SSD1306_ADDR & 0b11111110);
+  eeI2C_Write(0x00);
+  for (uint8_t i = 0; i < n; ++i) eeI2C_Write(c[i]);
+  eeI2C_Stop();
 }
 
 // REFRESH DISPLAY ---------------------------------------------------------
 
 void display(void)
 {
-	const uint8_t dlist1[] = {
-		SSD1306_PAGEADDR, 0,	// Page start address
-		0xFF,					// Page end (not really, but works here)
-		SSD1306_COLUMNADDR, 0}; // Column start address
-	ssd1306_commandList(dlist1, sizeof(dlist1));
-	ssd1306_command1(SSD1306_WIDTH - 1); // Column end address
+  const uint8_t dlist1[] = {
+    SSD1306_PAGEADDR, 0,  // Page start address
+    0xFF,         // Page end (not really, but works here)
+    SSD1306_COLUMNADDR, 0
+  }; // Column start address
+  ssd1306_commandList(dlist1, 5);
+  ssd1306_command1(SSD1306_WIDTH - 1); // Column end address
 
-	I2C_GenerateSTART(ENABLE);
-	volatile uint8_t dummy = I2C->SR1;
-
-	I2C_Send7bitAddress(SSD1306_ADDR, I2C_DIRECTION_TX);
-	dummy = I2C->SR1;
-	dummy = I2C->SR3;
-
-	I2C_SendData((uint8_t)0x40);
-	uint16_t count = SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8);
-	for (int i = 0; i < count; ++i)
-		I2C_SendData(buffer[i]);
-	I2C_GenerateSTOP(ENABLE);
+  eeI2C_Start();
+  eeI2C_Write(SSD1306_ADDR & 0b11111110);
+  eeI2C_Write(0x40);
+  const uint16_t count = SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8);
+  for (uint16_t i = 0; i < count; ++i)
+    eeI2C_Write(buffer[i]);
+  eeI2C_Stop();
 }
 
 // ALLOCATE & INIT DISPLAY -------------------------------------------------
@@ -89,14 +73,14 @@ void ssd1306_begin()
 							 SSD1306_SETDISPLAYCLOCKDIV, // 0xD5
 							 0x80,						 // the suggested ratio 0x80
 							 SSD1306_SETMULTIPLEX};		 // 0xA8
-	ssd1306_commandList(init1, sizeof(init1));
+	ssd1306_commandList(init1, 4);
 	ssd1306_command1(SSD1306_HEIGHT - 1);
 
 	const uint8_t init2[] = {SSD1306_SETDISPLAYOFFSET,	 // 0xD3
 							 0x0,						 // no offset
 							 SSD1306_SETSTARTLINE | 0x0, // line #0
 							 SSD1306_CHARGEPUMP};		 // 0x8D
-	ssd1306_commandList(init2, sizeof(init2));
+	ssd1306_commandList(init2, 4);
 
 	ssd1306_command1(0x14);
 
@@ -104,7 +88,7 @@ void ssd1306_begin()
 							 0x00,				 // 0x0 act like ks0108
 							 SSD1306_SEGREMAP | 0x1,
 							 SSD1306_COMSCANDEC};
-	ssd1306_commandList(init3, sizeof(init3));
+	ssd1306_commandList(init3, 4);
 
 	ssd1306_command1(SSD1306_SETCOMPINS);
 	ssd1306_command1(0x02);
@@ -119,12 +103,12 @@ void ssd1306_begin()
 							 SSD1306_NORMALDISPLAY,		  // 0xA6
 							 SSD1306_DEACTIVATE_SCROLL,
 							 SSD1306_DISPLAYON}; // Main screen turn on
-	ssd1306_commandList(init5, sizeof(init5));
+	ssd1306_commandList(init5, 6);
 }
 
 // DRAWING FUNCTIONS -------------------------------------------------------
 
-void drawPixel(int16_t x, int16_t y, uint16_t color)
+void drawPixel(const uint8_t x, const uint8_t y, const uint8_t color)
 {
 	if ((x >= 0) && (x < SSD1306_WIDTH) && (y >= 0) && (y < SSD1306_HEIGHT))
 	{
@@ -154,7 +138,6 @@ void clearDisplay(void)
 
 // OTHER HARDWARE SETTINGS -------------------------------------------------
 
-/**
 const uint8_t font[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x5B, 0x4F, 0x5B,
 	0x3E, 0x3E, 0x6B, 0x4F, 0x6B, 0x3E, 0x1C, 0x3E, 0x7C, 0x3E, 0x1C, 0x18,
@@ -277,7 +260,6 @@ const uint8_t font[] = {
 	0x01, 0x01, 0x1E, 0x00, 0x19, 0x1D, 0x17, 0x12, 0x00, 0x3C, 0x3C, 0x3C,
 	0x3C, 0x00, 0x00, 0x00, 0x00, 0x00 // #255 NBSP
 };
-**/
 
 // Draw a character
 /**************************************************************************/
@@ -294,8 +276,7 @@ const uint8_t font[] = {
  */
 /**************************************************************************/
 
-/**
-void drawChar(int16_t x, int16_t y, uint8_t c, uint16_t color, uint16_t bg)
+void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg)
 {
 	if ((x >= SSD1306_WIDTH) ||	 // Clip right
 		(y >= SSD1306_HEIGHT) || // Clip bottom
@@ -320,11 +301,10 @@ void drawChar(int16_t x, int16_t y, uint8_t c, uint16_t color, uint16_t bg)
 	}
 }
 
-void drawString(int16_t x, int16_t y, uint8_t *c, uint8_t n, uint16_t color, uint16_t bg)
+void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint8_t bg)
 {
 	for (int i = 0; i < n; ++i)
 	{
 		drawChar(x += 6, y, c[i], color, bg);
 	}
 }
-**/

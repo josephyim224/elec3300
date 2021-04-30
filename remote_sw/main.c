@@ -58,6 +58,11 @@ void main(void)
   initPeripherals();
 
   ssd1306_begin();
+  clearDisplay();
+  drawChar(0, 0, 'H', SSD1306_WHITE, SSD1306_BLACK);
+  drawChar(116, 24, 'H', SSD1306_WHITE, SSD1306_BLACK);
+  drawChar(116, 0, 'H', SSD1306_WHITE, SSD1306_BLACK);
+  drawChar(0, 24, 'H', SSD1306_WHITE, SSD1306_BLACK);
   drawPixel(10, 10, SSD1306_WHITE);
   drawPixel(10, 11, SSD1306_BLACK);
   display();
@@ -67,6 +72,10 @@ void main(void)
     GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
     Delay(500000);
     Delay(500000);
+
+    drawPixel(1, 1, SSD1306_WHITE);
+    drawPixel(2, 2, SSD1306_BLACK);
+    display();
   }
 }
 
@@ -102,8 +111,8 @@ void initPeripherals()
   GPIO_Init(LED0_GPIO_PORT, LED0_GPIO_PIN, GPIO_MODE_OUT_PP_LOW_FAST);
 
   // i2c init
-  I2C_Init(100000, 0xA0, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, 16);
-  I2C_Cmd(ENABLE);
+  GPIO_Init(SCL_GPIO_PORT, SCL_GPIO_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);
+  GPIO_Init(SDA_GPIO_PORT, SDA_GPIO_PIN, GPIO_MODE_OUT_OD_HIZ_FAST);
 
   // uart
   UART1_DeInit();
