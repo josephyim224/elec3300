@@ -332,8 +332,8 @@ int main(void) {
 		if (HAL_UART_Receive(&huart2, MPU_buffer, 43, 1000) == HAL_OK) {
 			uint8_t i = 0;
 			for (; i < 43 - 16; ++i) {
-				if (MPU_buffer[i] == 'x' && MPU_buffer[i + 1] == 'x'
-						&& MPU_buffer[i + 2] == 'x') {
+				if (MPU_buffer[i] == '1' && MPU_buffer[i + 1] == '2'
+						&& MPU_buffer[i + 2] == '3') {
 					struct MPU6050 received_mpu = m_mpu6050_readData(
 							MPU_buffer+ i + 3);
 					uint8_t is_pressing = MPU_buffer[i + 3 + 14];
