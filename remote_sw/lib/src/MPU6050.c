@@ -120,8 +120,7 @@ void mpu6050_begin()
 /**************************************************************************/
 void mpu6050_readData(void)
 {
-	uint8_t *buffer = mpu6050.buffer;
-	mpu6050_read(MPU6050_ACCEL_OUT, buffer, 14);
+	mpu6050_read(MPU6050_ACCEL_OUT, mpu6050.buffer, 14);
 
 	// mpu6050.rawAccX = buffer[0] << 8 | buffer[1];
 	// mpu6050.rawAccY = buffer[2] << 8 | buffer[3];
