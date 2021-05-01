@@ -40,6 +40,7 @@ struct MPU6050
 {
 	int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
 	float accel_scale, gyro_scale;
+	uint8_t buffer[14];
 };
 
 #endif /* INC_MPU6050_H_ */

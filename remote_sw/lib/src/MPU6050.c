@@ -85,8 +85,7 @@ void mpu6050_begin()
 		// mpu6050_read(MPU6050_CONFIG, &config, 1);
 		// config = (config & 0b11111000);
 		// mpu6050_write(MPU6050_CONFIG, &config, 1);
-	}
-	{
+	} {
 		// setGyroRange(MPU6050_RANGE_500_DEG);
 		uint8_t gyro_config;
 		mpu6050_read(MPU6050_GYRO_CONFIG, &gyro_config, 1);
@@ -113,7 +112,7 @@ void mpu6050_begin()
 /**************************************************************************/
 void mpu6050_readData(void)
 {
-	uint8_t buffer[14];
+	uint8_t *buffer = mpu6050.buffer;
 	mpu6050_read(MPU6050_ACCEL_OUT, buffer, 14);
 
 	mpu6050.rawAccX = buffer[0] << 8 | buffer[1];

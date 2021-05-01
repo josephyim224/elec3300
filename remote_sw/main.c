@@ -58,23 +58,21 @@ void initPeripherals();
 void main(void)
 {
   initPeripherals();
-  
+
   uint8_t tick = 0;
   while (1)
   {
-    // tick+=1;
-
-    GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
-    Delay(500000);
-    Delay(500000);
+    if (tick % 3 == 0)
+    {
+      GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
+    }
 
     uint8_t c[8];
 
     mpu6050_readData();
-    clearDisplay();
-    drawPixel(10, 10, SSD1306_WHITE);
 
-    int16_t t = mpu6050.rawAccX;
+    clearDisplay();
+    uint8_t t = tick;
     for (uint8_t i = 7; i > 0; --i)
     {
       switch (t % 10)
@@ -112,12 +110,33 @@ void main(void)
       default:
         break;
       }
-
       t = t / 10;
     }
     drawString(0, 0, c, 8, SSD1306_WHITE, SSD1306_BLACK);
-
     display();
+
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    {
+    }
+    UART1_SendData8('x');
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    {
+    }
+    UART1_SendData8('x');
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    {
+    }
+    UART1_SendData8('x');
+
+    for (uint8_t i = 0; i < 14; ++i)
+    {
+      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+      {
+      }
+      UART1_SendData8(mpu6050.buffer[i]);
+    }
+
+    tick+=1;
   }
 }
 
@@ -158,10 +177,10 @@ void initPeripherals()
 
   // uart
   UART1_DeInit();
-  UART1_Init((uint32_t)9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO,
+  UART1_Init(38400, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO,
              (UART1_SyncMode_TypeDef)(UART1_SYNCMODE_CLOCK_ENABLE | UART1_SYNCMODE_CPOL_LOW | UART1_SYNCMODE_CPHA_MIDDLE | UART1_SYNCMODE_LASTBIT_ENABLE),
              UART1_MODE_TXRX_ENABLE);
-  UART1_Cmd(DISABLE);
+  UART1_Cmd(ENABLE);
 
   // ssd1306
   ssd1306_begin();
