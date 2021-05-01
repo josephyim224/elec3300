@@ -148,10 +148,10 @@ SDA:    D8       D7     D6      D5       D4     D3       D2      D1     D0      
 ***************************************************************************************************/
 uint8_t eeI2C_Read(uint8_t v_ackOption_u8)
 {
-  uint8_t i, v_i2cData_u8 = 0x00;
+  uint8_t v_i2cData_u8 = 0x00;
 
-  SDA_PIN_HIGH;           //Make SDA as I/P
-  for (i = 0; i < 8; i++) // loop 8times read 1-byte of data
+  SDA_PIN_HIGH;                   //Make SDA as I/P
+  for (uint8_t i = 0; i < 8; i++) // loop 8times read 1-byte of data
   {
     DELAY_us(1);
     SCL_PIN_HIGH; // Pull SCL High
@@ -162,7 +162,7 @@ uint8_t eeI2C_Read(uint8_t v_ackOption_u8)
 
     SCL_PIN_LOW; // Clear SCL to complete the Clock
   }
-  
+
   if (v_ackOption_u8) /*Send the Ack/NoAck depending on the user option*/
     i2c_Ack();
   else

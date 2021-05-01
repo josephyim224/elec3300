@@ -69,7 +69,7 @@ void main(void)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
 
-      if (top || side)
+      if (side)
       {
         uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
@@ -79,6 +79,8 @@ void main(void)
         drawString(0, 8, "vo", 2);
         drawUint16(24, 8, volt);
         drawUint16(0, 16, mpu6050.buffer[0]);
+
+        drawUint16(72, 0, mpu6050.who_am_i);
 
         if (volt < 360)
           drawString(0, 24, "LOW BATT", 8);

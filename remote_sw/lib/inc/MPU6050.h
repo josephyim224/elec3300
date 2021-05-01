@@ -14,6 +14,7 @@
 #include "stm8s.h"
 
 #define MPU6050_I2CADDR_DEFAULT (0xD0) ///< MPU6050 default i2c address w/ AD0 high
+#define MPU6050_DEVICE_ID 0x68
 
 #define MPU6050_SELF_TEST_X 0x0D	   ///< Self test factory calibrated values register
 #define MPU6050_SELF_TEST_Y 0x0E	   ///< Self test factory calibrated values register
@@ -41,6 +42,7 @@ struct MPU6050
 	// int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
 	// float accel_scale, gyro_scale;
 	uint8_t buffer[14];
+	uint8_t who_am_i;
 };
 
 #endif /* INC_MPU6050_H_ */

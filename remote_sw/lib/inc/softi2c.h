@@ -53,12 +53,12 @@
 #define SDA_PIN_HIGH GPIO_WriteHigh(SDA_GPIO_PORT, SDA_GPIO_PIN)
 #define SDA_PIN_LOW GPIO_WriteLow(SDA_GPIO_PORT, SDA_GPIO_PIN)
 
-#define SDA_PIN GPIO_ReadInputPin(SDA_GPIO_PORT, SDA_GPIO_PIN)
+#define SDA_PIN (GPIO_ReadInputPin(SDA_GPIO_PORT, SDA_GPIO_PIN) ? 0x01 : 0x00)
 #define SCL_PIN GPIO_ReadInputPin(SCL_GPIO_PORT, SCL_GPIO_PIN)
 
 #define DELAY_us(n)     \
   {                     \
-    uint8_t nCount = 30; \
+    uint8_t nCount = 5; \
     while (nCount != 0) \
       nCount--;         \
   }

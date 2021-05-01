@@ -59,6 +59,13 @@ void mpu6050_delay(uint8_t delay)
 void mpu6050_begin()
 {
 	{
+		mpu6050_read(MPU6050_WHO_AM_I, &(mpu6050.who_am_i), 1);
+		if (mpu6050.who_am_i != MPU6050_DEVICE_ID)
+			while (1)
+			{
+			}
+	}
+	{
 		// mpu6050_reset();
 		uint8_t power_mgmt_1;
 		mpu6050_read(MPU6050_PWR_MGMT_1, &power_mgmt_1, 1);
@@ -83,9 +90,10 @@ void mpu6050_begin()
 		// setFilterBandwidth(MPU6050_BAND_260_HZ);
 		uint8_t config;
 		mpu6050_read(MPU6050_CONFIG, &config, 1);
-		config = (config & 0b11111000);
+		config = (config & 0b11111000) | (0x0 << 0);
 		mpu6050_write(MPU6050_CONFIG, &config, 1);
-	} {
+	}
+	{
 		// setGyroRange(MPU6050_RANGE_500_DEG);
 		uint8_t gyro_config;
 		mpu6050_read(MPU6050_GYRO_CONFIG, &gyro_config, 1);
