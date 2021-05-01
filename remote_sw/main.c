@@ -110,14 +110,13 @@ void main(void)
     }
 
     mpu6050_readData();
-
     for (uint8_t i = 0; i < 2; ++i)
     {
-      BT_Send("xxx", 3);
+      BT_Send("123", 3);
       BT_Send(mpu6050.buffer, 14);
       BT_Send(&top, 1);
       BT_Send(&side, 1);
-      BT_Send("yyy", 3);
+      BT_Send("456", 3);
     }
 
     tick += 1;
