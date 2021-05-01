@@ -66,12 +66,18 @@ void main(void)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
 
+      uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
+
       clearDisplay();
       drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
       drawUint16(24, 0, tick);
       drawString(0, 8, "vo", 2, SSD1306_WHITE, SSD1306_BLACK);
-      drawUint16(24, 8, (uint16_t) ((uint32_t) 100 * ADC1_GetConversionValue() * 4 / 696));
+      drawUint16(24, 8, volt);
       drawUint16(0, 16, mpu6050.buffer[0]);
+
+      if (volt < 360)
+        drawString(0, 24, "LOW BATT", 8, SSD1306_WHITE, SSD1306_BLACK);
+
       display();
     }
 
