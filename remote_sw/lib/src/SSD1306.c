@@ -308,3 +308,13 @@ void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint
 		drawChar(x += 6, y, c[i], color, bg);
 	}
 }
+
+void drawUint16(uint8_t x, uint8_t y, uint16_t t)
+{
+	x += (8-1) * 6;
+	for (uint8_t i = 7; i > 0; --i)
+	{
+		drawChar(x -= 6, y, (t % 10) + 48, SSD1306_WHITE, SSD1306_BLACK);
+		t = t / 10;
+	}
+}

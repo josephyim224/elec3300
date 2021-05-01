@@ -65,68 +65,25 @@ void main(void)
     if (tick % 3 == 0)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
-    }
 
-    uint8_t c[8];
+      clearDisplay();
+      drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
+      drawUint16(24, 0, tick);
+      drawString(0, 8, "vo", 2, SSD1306_WHITE, SSD1306_BLACK);
+      drawUint16(24, 8, (uint16_t) ((uint32_t) 100 * ADC1_GetConversionValue() * 4 / 696));
+      drawUint16(0, 16, mpu6050.buffer[0]);
+      display();
+    }
 
     mpu6050_readData();
 
-    clearDisplay();
-    uint8_t t = tick;
-    for (uint8_t i = 7; i > 0; --i)
+    for (uint8_t i = 0; i < 3; ++i)
     {
-      switch (t % 10)
+      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
       {
-      case 0:
-        c[i] = '0';
-        break;
-      case 1:
-        c[i] = '1';
-        break;
-      case 2:
-        c[i] = '2';
-        break;
-      case 3:
-        c[i] = '3';
-        break;
-      case 4:
-        c[i] = '4';
-        break;
-      case 5:
-        c[i] = '5';
-        break;
-      case 6:
-        c[i] = '6';
-        break;
-      case 7:
-        c[i] = '7';
-        break;
-      case 8:
-        c[i] = '8';
-        break;
-      case 9:
-        c[i] = '9';
-        break;
-      default:
-        break;
       }
-      t = t / 10;
+      UART1_SendData8('x');
     }
-    drawString(0, 0, c, 8, SSD1306_WHITE, SSD1306_BLACK);
-    display();
-
-    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-    {
-    }
-    UART1_SendData8('x');
-    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-    {
-    }
-    UART1_SendData8('x');
-    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-    {
-    }
-    UART1_SendData8('x');
 
     for (uint8_t i = 0; i < 14; ++i)
     {
@@ -136,7 +93,15 @@ void main(void)
       UART1_SendData8(mpu6050.buffer[i]);
     }
 
-    tick+=1;
+    for (uint8_t i = 0; i < 3; ++i)
+    {
+      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+      {
+      }
+      UART1_SendData8('y');
+    }
+
+    tick += 1;
   }
 }
 
@@ -188,6 +153,13 @@ void initPeripherals()
 
   // mpu6050
   mpu6050_begin();
+
+  // adc1
+  ADC1_DeInit();
+  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_4, ADC1_PRESSEL_FCPU_D8,
+            ADC1_EXTTRIG_TIM, DISABLE, ADC1_ALIGN_RIGHT, ADC1_SCHMITTTRIG_CHANNEL4,
+            DISABLE);
+  ADC1_StartConversion();
 
   enableInterrupts();
 }

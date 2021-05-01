@@ -68,4 +68,6 @@ void ssd1306_commandList(const uint8_t *c, uint8_t n);
 void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg);
 void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint8_t bg);
 
+void drawUint16(uint8_t x, uint8_t y, uint16_t v);
+
 #endif /* INC_SSD1306_H_ */
