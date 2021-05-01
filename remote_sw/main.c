@@ -63,25 +63,29 @@ void main(void)
   while (1)
   {
     uint8_t top = !GPIO_ReadInputPin(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN);
-    uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
-    if (tick % 3 == 0)
+    if (tick % 10 == 0)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
 
-      clearDisplay();
-      drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
-      drawUint16(24, 0, tick);
-      drawString(0, 8, "vo", 2, SSD1306_WHITE, SSD1306_BLACK);
-      drawUint16(24, 8, volt);
-      drawUint16(0, 16, mpu6050.buffer[0]);
-
-      if (volt < 360)
-        drawString(0, 24, "LOW BATT", 8, SSD1306_WHITE, SSD1306_BLACK);
       if (top)
-        drawString(56, 24, "TOP", 8, SSD1306_WHITE, SSD1306_BLACK);
+      {
+        uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
-      display();
+        clearDisplay();
+        drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
+        drawUint16(24, 0, tick);
+        drawString(0, 8, "vo", 2, SSD1306_WHITE, SSD1306_BLACK);
+        drawUint16(24, 8, volt);
+        drawUint16(0, 16, mpu6050.buffer[0]);
+
+        if (volt < 360)
+          drawString(0, 24, "LOW BATT", 8, SSD1306_WHITE, SSD1306_BLACK);
+        if (top)
+          drawString(56, 24, "TOP", 8, SSD1306_WHITE, SSD1306_BLACK);
+
+        display();
+      }
     }
 
     mpu6050_readData();

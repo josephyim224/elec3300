@@ -81,10 +81,10 @@ void mpu6050_begin()
 	}
 	{
 		// setFilterBandwidth(MPU6050_BAND_260_HZ);
-		// uint8_t config;
-		// mpu6050_read(MPU6050_CONFIG, &config, 1);
-		// config = (config & 0b11111000);
-		// mpu6050_write(MPU6050_CONFIG, &config, 1);
+		uint8_t config;
+		mpu6050_read(MPU6050_CONFIG, &config, 1);
+		config = (config & 0b11111000);
+		mpu6050_write(MPU6050_CONFIG, &config, 1);
 	} {
 		// setGyroRange(MPU6050_RANGE_500_DEG);
 		uint8_t gyro_config;
@@ -115,15 +115,15 @@ void mpu6050_readData(void)
 	uint8_t *buffer = mpu6050.buffer;
 	mpu6050_read(MPU6050_ACCEL_OUT, buffer, 14);
 
-	mpu6050.rawAccX = buffer[0] << 8 | buffer[1];
-	mpu6050.rawAccY = buffer[2] << 8 | buffer[3];
-	mpu6050.rawAccZ = buffer[4] << 8 | buffer[5];
+	// mpu6050.rawAccX = buffer[0] << 8 | buffer[1];
+	// mpu6050.rawAccY = buffer[2] << 8 | buffer[3];
+	// mpu6050.rawAccZ = buffer[4] << 8 | buffer[5];
 
-	mpu6050.rawTemp = buffer[6] << 8 | buffer[7];
+	// mpu6050.rawTemp = buffer[6] << 8 | buffer[7];
 
-	mpu6050.rawGyroX = buffer[8] << 8 | buffer[9];
-	mpu6050.rawGyroY = buffer[10] << 8 | buffer[11];
-	mpu6050.rawGyroZ = buffer[12] << 8 | buffer[13];
+	// mpu6050.rawGyroX = buffer[8] << 8 | buffer[9];
+	// mpu6050.rawGyroY = buffer[10] << 8 | buffer[11];
+	// mpu6050.rawGyroZ = buffer[12] << 8 | buffer[13];
 
 	// mpu6050.accel_scale = 16384;
 	// mpu6050.gyro_scale = 65.5;
