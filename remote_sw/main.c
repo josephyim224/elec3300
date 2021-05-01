@@ -43,7 +43,7 @@
 extern struct MPU6050 mpu6050;
 /* Private function prototypes -----------------------------------------------*/
 void Delay(uint16_t nCount);
-
+void BT_Send(uint8_t *, uint8_t);
 /* Private functions ---------------------------------------------------------*/
 
 void initPeripherals();
@@ -63,26 +63,29 @@ void main(void)
   while (1)
   {
     uint8_t top = !GPIO_ReadInputPin(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN);
+    uint8_t side = !GPIO_ReadInputPin(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN);
 
     if (tick % 10 == 0)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
 
-      if (top)
+      if (top || side)
       {
         uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
         clearDisplay();
-        drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
+        drawString(0, 0, "ti", 2);
         drawUint16(24, 0, tick);
-        drawString(0, 8, "vo", 2, SSD1306_WHITE, SSD1306_BLACK);
+        drawString(0, 8, "vo", 2);
         drawUint16(24, 8, volt);
         drawUint16(0, 16, mpu6050.buffer[0]);
 
         if (volt < 360)
-          drawString(0, 24, "LOW BATT", 8, SSD1306_WHITE, SSD1306_BLACK);
+          drawString(0, 24, "LOW BATT", 8);
         if (top)
-          drawString(56, 24, "TOP", 8, SSD1306_WHITE, SSD1306_BLACK);
+          drawString(54, 24, "TOP", 3);
+        if (side)
+          drawString(78, 24, "SIDE", 4);
 
         display();
       }
@@ -90,31 +93,13 @@ void main(void)
 
     mpu6050_readData();
 
-    for (uint8_t i = 0; i < 3; ++i)
+    for (uint8_t i = 0; i < 2; ++i)
     {
-      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-      {
-      }
-      UART1_SendData8('x');
-    }
-
-    for (uint8_t i = 0; i < 14; ++i)
-    {
-      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-      {
-      }
-      UART1_SendData8(mpu6050.buffer[i]);
-    }
-
-    UART1_SendData8(top);
-    UART1_SendData8(0x0);
-
-    for (uint8_t i = 0; i < 3; ++i)
-    {
-      while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-      {
-      }
-      UART1_SendData8('y');
+      BT_Send("xxx", 3);
+      BT_Send(mpu6050.buffer, 14);
+      BT_Send(&top, 1);
+      BT_Send(&side, 1);
+      BT_Send("yyy", 3);
     }
 
     tick += 1;
@@ -149,7 +134,7 @@ void initPeripherals()
 
   // gpio init
   GPIO_Init(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_NO_IT);
-  // GPIO_Init(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_NO_IT);
+  GPIO_Init(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_NO_IT);
   GPIO_Init(LED0_GPIO_PORT, LED0_GPIO_PIN, GPIO_MODE_OUT_PP_LOW_FAST);
 
   // i2c init
@@ -191,6 +176,17 @@ void Delay(uint16_t nCount)
   while (nCount != 0)
   {
     nCount--;
+  }
+}
+
+void BT_Send(uint8_t *data, uint8_t n)
+{
+  for (uint8_t i = 0; i < n; ++i)
+  {
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    {
+    }
+    UART1_SendData8(data[i]);
   }
 }
 

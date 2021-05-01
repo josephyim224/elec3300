@@ -65,8 +65,8 @@ void drawPixel(const uint8_t x, const uint8_t y, const uint8_t color);
 void ssd1306_command1(uint8_t c);
 void ssd1306_commandList(const uint8_t *c, uint8_t n);
 
-void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg);
-void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint8_t bg);
+void drawChar(uint8_t x, uint8_t y, uint8_t c);
+void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n);
 
 void drawUint16(uint8_t x, uint8_t y, uint16_t v);
 

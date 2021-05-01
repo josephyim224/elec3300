@@ -276,7 +276,7 @@ const uint8_t font[] = {
  */
 /**************************************************************************/
 
-void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg)
+void drawChar(uint8_t x, uint8_t y, uint8_t c)
 {
 	if ((x >= SSD1306_WIDTH) ||	 // Clip right
 		(y >= SSD1306_HEIGHT) || // Clip bottom
@@ -284,37 +284,31 @@ void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t bg)
 		((y + 8 - 1) < 0))		 // Clip top
 		return;
 
-	for (int8_t i = 0; i < 5; i++)
-	{ // Char bitmap = 5 columns
+	// Char bitmap = 5 columns
+	for (uint8_t i = 0; i < 5; i++)
+	{
 		uint8_t line = font[c * 5 + i];
-		for (int8_t j = 0; j < 8; j++, line >>= 1)
+		for (uint8_t j = 0; j < 8; j++, line >>= 1)
 		{
-			if (line & 1)
-			{
-				drawPixel(x + i, y + j, color);
-			}
-			else if (bg != color)
-			{
-				drawPixel(x + i, y + j, bg);
-			}
+			drawPixel(x + i, y + j, line & 1);
 		}
 	}
 }
 
-void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n, uint8_t color, uint8_t bg)
+void drawString(uint8_t x, uint8_t y, uint8_t *c, uint8_t n)
 {
 	for (int i = 0; i < n; ++i)
 	{
-		drawChar(x += 6, y, c[i], color, bg);
+		drawChar(x += 6, y, c[i]);
 	}
 }
 
 void drawUint16(uint8_t x, uint8_t y, uint16_t t)
 {
-	x += (8-1) * 6;
+	x += (8 - 1) * 6;
 	for (uint8_t i = 7; i > 0; --i)
 	{
-		drawChar(x -= 6, y, (t % 10) + 48, SSD1306_WHITE, SSD1306_BLACK);
+		drawChar(x -= 6, y, (t % 10) + 48);
 		t = t / 10;
 	}
 }
