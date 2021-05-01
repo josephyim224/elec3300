@@ -62,11 +62,12 @@ void main(void)
   uint8_t tick = 0;
   while (1)
   {
+    uint8_t top = !GPIO_ReadInputPin(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN);
+    uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
+
     if (tick % 3 == 0)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
-
-      uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
       clearDisplay();
       drawString(0, 0, "ti", 2, SSD1306_WHITE, SSD1306_BLACK);
@@ -77,6 +78,8 @@ void main(void)
 
       if (volt < 360)
         drawString(0, 24, "LOW BATT", 8, SSD1306_WHITE, SSD1306_BLACK);
+      if (top)
+        drawString(56, 24, "TOP", 8, SSD1306_WHITE, SSD1306_BLACK);
 
       display();
     }
@@ -98,6 +101,9 @@ void main(void)
       }
       UART1_SendData8(mpu6050.buffer[i]);
     }
+
+    UART1_SendData8(top);
+    UART1_SendData8(0x0);
 
     for (uint8_t i = 0; i < 3; ++i)
     {
@@ -138,8 +144,8 @@ void initPeripherals()
   CLK->CKDIVR |= (uint8_t)0;
 
   // gpio init
-  GPIO_Init(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_IT);
-  GPIO_Init(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_IT);
+  GPIO_Init(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_NO_IT);
+  // GPIO_Init(SIDE_BUTTON_GPIO_PORT, SIDE_BUTTON_GPIO_PIN, GPIO_MODE_IN_FL_NO_IT);
   GPIO_Init(LED0_GPIO_PORT, LED0_GPIO_PIN, GPIO_MODE_OUT_PP_LOW_FAST);
 
   // i2c init

@@ -125,8 +125,8 @@ void mpu6050_readData(void)
 	mpu6050.rawGyroY = buffer[10] << 8 | buffer[11];
 	mpu6050.rawGyroZ = buffer[12] << 8 | buffer[13];
 
-	mpu6050.accel_scale = 16384;
-	mpu6050.gyro_scale = 65.5;
+	// mpu6050.accel_scale = 16384;
+	// mpu6050.gyro_scale = 65.5;
 
 	// mpu6050.temperature = (mpu6050.rawTemp / 340.0) + 36.53;
 	// mpu6050.accX = ((float)mpu6050.rawAccX) / accel_scale;
