@@ -60,6 +60,9 @@ void main(void)
   initPeripherals();
 
   uint8_t tick = 0;
+  uint8_t mode = 0;
+  uint8_t topStart = 0;
+  uint8_t topped = 0;
   while (1)
   {
     uint8_t top = !GPIO_ReadInputPin(TOP_BUTTON_GPIO_PORT, TOP_BUTTON_GPIO_PIN);
@@ -69,7 +72,20 @@ void main(void)
     {
       GPIO_WriteReverse(LED0_GPIO_PORT, LED0_GPIO_PIN);
 
-      if (side)
+      if (top)
+      {
+        if (!topped)
+          topStart = tick;
+        topped = 1;
+      }
+      else if (topped)
+      {
+        topped = 0;
+        if (tick - topStart < 20)
+          mode = mode ? 0 : 1;
+      }
+
+      if (top == mode || side)
       {
         uint16_t volt = (uint16_t)((uint32_t)100 * ADC1_GetConversionValue() * 4 / 696);
 
