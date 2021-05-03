@@ -95,6 +95,7 @@ void main(void)
         drawString(0, 8, "vo", 2);
         drawUint16(24, 8, volt);
         drawUint16(0, 16, mpu6050.buffer[0]);
+        drawUint16(64, 16, mpu6050.buffer[1]);
 
         drawUint16(72, 0, mpu6050.who_am_i);
 
@@ -200,7 +201,7 @@ void BT_Send(uint8_t *data, uint8_t n)
 {
   for (uint8_t i = 0; i < n; ++i)
   {
-    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    while (!((UART1->SR & (uint8_t)UART1_FLAG_TXE) != (uint8_t)0x00))
     {
     }
     UART1_SendData8(data[i]);
