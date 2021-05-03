@@ -53,7 +53,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t RGBs[3 * 6];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +106,17 @@ struct MPU6050 m_mpu6050_readData(uint8_t *buffer) {
  */
 int main(void) {
 	/* USER CODE BEGIN 1 */
+	RGBs[0] = 0;
+	RGBs[1] = 0;
+	RGBs[2] = 255;
+
+	RGBs[3] = 0;
+	RGBs[4] = 255;
+	RGBs[5] = 0;
+
+	RGBs[6] = 255;
+	RGBs[7] = 0;
+	RGBs[8] = 0;
 
 	/* USER CODE END 1 */
 
@@ -199,11 +210,11 @@ int main(void) {
 //	float GyroErrorY = 0;
 //	float GyroErrorZ = 0;
 
-	float AccErrorX = -10.75;
-	float AccErrorY = -0;
-	float GyroErrorX = 60;
-	float GyroErrorY = 60;
-	float GyroErrorZ = 20;
+	float AccErrorX = -2.51f;
+	float AccErrorY = -4.57f;
+	float GyroErrorX = 0.87f;
+	float GyroErrorY = 2.89f;
+	float GyroErrorZ = -4.93;
 
 	float gyroAngleX = 0; // deg/s * s = deg
 	float gyroAngleY = 0;
@@ -217,6 +228,9 @@ int main(void) {
 	float recorded_yaw = 0;
 
 	uint8_t UART2_rxBuffer[3];
+	uint32_t last_RGB_tick = 0;
+
+	uint8_t color_count = 0;
 	while (1) {
 		HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
 //		HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
@@ -242,54 +256,8 @@ int main(void) {
 		uint8_t UART2_rx;
 		static uint8_t uart2_count = 0;
 
-		mpu6050_readData();
+//		mpu6050_readData();
 		uint8_t calibrate_error = 1;
-//		if (calibrate_error) {
-//			if (count < 200) {
-//				AccErrorX = AccErrorX
-//						+ ((atan(
-//								(mpu6050.accY)
-//										/ sqrt(
-//												pow((mpu6050.accX), 2)
-//														+ pow((mpu6050.accZ),
-//																2))) * 180
-//								/ M_PI));
-//				AccErrorY = AccErrorY
-//						+ ((atan(
-//								-1 * (mpu6050.accX)
-//										/ sqrt(
-//												pow((mpu6050.accY), 2)
-//														+ pow((mpu6050.accZ),
-//																2))) * 180
-//								/ M_PI));
-//				GyroErrorX = GyroErrorX + mpu6050.gyroX;
-//				GyroErrorY = GyroErrorY + mpu6050.gyroY;
-//				GyroErrorZ = GyroErrorZ + mpu6050.gyroZ;
-//				count++;
-//
-//				sprintf(c, "%f      ", AccErrorX / count);
-//				drawString(0, 0, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				sprintf(c, "%f      ", AccErrorY / count);
-//				drawString(0, 8, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				sprintf(c, "%f      ", GyroErrorX / count);
-//				drawString(0, 16, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				sprintf(c, "%f      ", GyroErrorY / count);
-//				drawString(0, 24, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				sprintf(c, "%f      ", GyroErrorZ / count);
-//				drawString(60, 0, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				sprintf(c, "%d      ", count);
-//				drawString(60, 8, c, 9, SSD1306_WHITE,
-//				SSD1306_BLACK);
-//				if (count == 200) {
-//					HAL_Delay(1000000);
-//				}
-//			}
-//		}
 
 //		static int encoder_counter = -1;
 //
@@ -327,7 +295,7 @@ int main(void) {
 //
 //			}
 //		}
-//		MotorUpdate();
+
 		uint8_t MPU_buffer[43];
 		if (HAL_UART_Receive(&huart2, MPU_buffer, 43, 1000) == HAL_OK) {
 			uint8_t i = 0;
@@ -335,12 +303,12 @@ int main(void) {
 				if (MPU_buffer[i] == '1' && MPU_buffer[i + 1] == '2'
 						&& MPU_buffer[i + 2] == '3') {
 					struct MPU6050 received_mpu = m_mpu6050_readData(
-							MPU_buffer+ i + 3);
+							MPU_buffer + i + 3);
 					uint8_t is_pressing = MPU_buffer[i + 3 + 14];
 					static uint8_t was_pressing = 0;
 
 					sprintf(c, "pres %u     ", is_pressing);
-					drawString(60, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
+					drawString(60, 8, c, 9, SSD1306_WHITE, SSD1306_BLACK);
 //					sprintf(c, "%f      ", received_mpu.accX);
 //					drawString(0, 0, c, 9, SSD1306_WHITE, SSD1306_BLACK);
 //					sprintf(c, "%f      ", received_mpu.accY);
@@ -348,7 +316,7 @@ int main(void) {
 //					sprintf(c, "%f      ", received_mpu.accZ);
 //					drawString(0, 16, c, 9, SSD1306_WHITE, SSD1306_BLACK);
 
-					uint8_t calibrate_error = 1;
+					uint8_t calibrate_error = 0;
 
 					//source: https://howtomechatronics.com/tutorials/arduino/arduino-and-mpu6050-accelerometer-and-gyroscope-tutorial/
 
@@ -382,15 +350,6 @@ int main(void) {
 							GyroErrorY = GyroErrorY + received_mpu.gyroY;
 							GyroErrorZ = GyroErrorZ + received_mpu.gyroZ;
 							count++;
-//							sprintf(c, "X%f      ", received_mpu.gyroX);
-//							drawString(0, 0, c, 9, SSD1306_WHITE,
-//							SSD1306_BLACK);
-//							sprintf(c, "Y%f      ", received_mpu.gyroY);
-//							drawString(0, 8, c, 9, SSD1306_WHITE,
-//							SSD1306_BLACK);
-//							sprintf(c, "Z%f      ", received_mpu.gyroZ);
-//							drawString(0, 16, c, 9, SSD1306_WHITE,
-//							SSD1306_BLACK);
 
 							sprintf(c, "%f      ", AccErrorX / count);
 							drawString(0, 0, c, 9, SSD1306_WHITE,
@@ -455,32 +414,202 @@ int main(void) {
 						}
 						last_MPU_tick = MPU_tick;
 
-//						if (is_pressing && !was_pressing) {
-//							recorded_roll = roll;
-//							recorded_pitch = pitch;
-//							recorded_yaw = yaw;
-//						}
-//						if (is_pressing) {
-						sprintf(c, "r:%f      ", roll);
-						drawString(0, 0, c, 9, SSD1306_WHITE,
-						SSD1306_BLACK);
-						sprintf(c, "p:%f      ", pitch);
-						drawString(0, 8, c, 9, SSD1306_WHITE,
-						SSD1306_BLACK);
-						sprintf(c, "y:%f      ", yaw);
-						drawString(0, 16, c, 9, SSD1306_WHITE,
-						SSD1306_BLACK);
-//						}
+						if (is_pressing && !was_pressing) {
+							recorded_roll = roll;
+							recorded_pitch = pitch;
+							recorded_yaw = yaw;
+						}
+						if (is_pressing) {
+							float dr = roll - recorded_roll;
+							float dp = pitch - recorded_pitch;
+							float dy = yaw - recorded_yaw;
+
+							sprintf(c, "r:%f      ", dr);
+							drawString(0, 0, c, 9, SSD1306_WHITE,
+							SSD1306_BLACK);
+							sprintf(c, "p:%f      ", dp);
+							drawString(0, 8, c, 9, SSD1306_WHITE,
+							SSD1306_BLACK);
+							sprintf(c, "y:%f      ", dy);
+							drawString(0, 16, c, 9, SSD1306_WHITE,
+							SSD1306_BLACK);
+
+							if ((fabs(dr) - fabs(dp) > 20)
+									&& (fabs(dr) - fabs(dy) > 20)) {
+								if (dr > 0) {
+									move(MOTION_FORWARD);
+									sprintf(c, "forward  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+
+									if (HAL_GetTick() - last_RGB_tick > 100) {
+										last_RGB_tick = HAL_GetTick();
+										uint8_t c[] = { 255, 0, 0 };
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											writeRGB(c);
+										}
+									}
+								} else {
+									move(MOTION_BACKWARD);
+									sprintf(c, "back  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+
+									if (HAL_GetTick() - last_RGB_tick > 100) {
+										last_RGB_tick = HAL_GetTick();
+										uint8_t c[] = { 0, 255, 0 };
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											writeRGB(c);
+										}
+									}
+								}
+							} else if ((fabs(dp) - fabs(dr) > 50)
+									&& (fabs(dp) - fabs(dy) > 50)) {
+								if (dp > 0) {
+									move(MOTION_ROTATE_LEFT);
+									sprintf(c, "left  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+
+									if (HAL_GetTick() - last_RGB_tick > 20) {
+										color_count = (color_count + 17) % 18;
+										last_RGB_tick = HAL_GetTick();
+										uint8_t R[] = { 255, 0, 0 };
+										uint8_t G[] = { 0, 255, 0 };
+										uint8_t B[] = { 0, 0, 255 };
+										uint8_t C[] = { 0, 0, 0 };
+
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											if ((color_count % 6) * 3 == i
+													|| (color_count + 1 % 6) * 3
+															== i) {
+												if (color_count < 6) {
+													writeRGB(R);
+												} else if (color_count < 12) {
+													writeRGB(G);
+												} else if (color_count < 18) {
+													writeRGB(B);
+												}
+
+											} else {
+												writeRGB(C);
+												//												writeRGB(R);
+											}
+										}
+
+									}
+
+								} else {
+									sprintf(c, "right  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+									move(MOTION_ROTATE_RIGHT);
+
+									if (HAL_GetTick() - last_RGB_tick > 20) {
+										color_count = (color_count + 1) % 18;
+										last_RGB_tick = HAL_GetTick();
+										uint8_t R[] = { 255, 0, 0 };
+										uint8_t G[] = { 0, 255, 0 };
+										uint8_t B[] = { 0, 0, 255 };
+										uint8_t C[] = { 0, 0, 0 };
+
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											if ((color_count % 6) * 3 == i
+													|| (color_count + 1 % 6) * 3
+															== i) {
+												if (color_count < 6) {
+													writeRGB(R);
+												} else if (color_count < 12) {
+													writeRGB(G);
+												} else if (color_count < 18) {
+													writeRGB(B);
+												}
+
+											} else {
+												writeRGB(C);
+											}
+										}
+
+									}
+								}
+							} else if ((fabs(dy) - fabs(dr) > 20)
+									&& (fabs(dy) - fabs(dp) > 20)) {
+								if (dr > 0) {
+									sprintf(c, "T_L  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+									move(MOTION_TRANSLATE_LEFT);
+
+									if (HAL_GetTick() - last_RGB_tick > 100) {
+										last_RGB_tick = HAL_GetTick();
+										uint8_t c[] = { 255, 255, 0 };
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											writeRGB(c);
+										}
+									}
+								} else {
+									sprintf(c, "T_R  ");
+									drawString(60, 0, c, 9, SSD1306_WHITE,
+									SSD1306_BLACK);
+									move(MOTION_TRANSLATE_RIGHT);
+
+									if (HAL_GetTick() - last_RGB_tick > 100) {
+										last_RGB_tick = HAL_GetTick();
+										uint8_t c[] = { 0, 255, 255 };
+										for (uint8_t i = 0; i < 3 * 6; i += 3) {
+											writeRGB(c);
+										}
+									}
+								}
+
+							} else {
+								move(MOTION_STOP);
+//								if (HAL_GetTick() - last_RGB_tick > 20) {
+//									last_RGB_tick = HAL_GetTick();
+//
+//									float smoothness_pts = 600;//larger=slower change in brightness
+//
+//									float gamma = 0.14; // affects the width of peak (more or less darkness)
+//									float beta = 0.5; // shifts the gaussian to be symmetric
+//									float ii = (last_RGB_tick / 10) % 600;
+//									float pwm_val = 255.0*(exp(-(pow(((ii/smoothness_pts)-beta)/gamma,2.0))/2.0));
+//
+//									uint8_t c[] = { pwm_val, pwm_val, pwm_val };
+//									for (uint8_t i = 0; i < 3 * 6; i += 3) {
+//										writeRGB(c);
+//									}
+//								}
+							}
+
+						} else {
+							move(MOTION_STOP);
+
+							if (HAL_GetTick() - last_RGB_tick > 20) {
+								last_RGB_tick = HAL_GetTick();
+
+								float smoothness_pts = 600; //larger=slower change in brightness
+
+								float gamma = 0.14; // affects the width of peak (more or less darkness)
+								float beta = 0.5; // shifts the gaussian to be symmetric
+								float ii = (last_RGB_tick / 10) % 600;
+								float pwm_val = 255.0
+										* (exp(
+												-(pow(
+														((ii / smoothness_pts)
+																- beta) / gamma,
+														2.0)) / 2.0));
+
+								uint8_t c[] = { pwm_val, pwm_val, pwm_val };
+								for (uint8_t i = 0; i < 3 * 6; i += 3) {
+									writeRGB(c);
+								}
+							}
+
+						}
+
 						was_pressing = is_pressing;
 
-//						sprintf(c, "gX:%f      ", gyroAngleX);
-//						drawString(60, 0, c, 9, SSD1306_WHITE,
-//						SSD1306_BLACK);
-//						sprintf(c, "gY:%f      ", gyroAngleY);
-//						drawString(60, 8, c, 9, SSD1306_WHITE,
-//						SSD1306_BLACK);
-
-						sprintf(c, "s:%f      ", elapsedTime);
+						sprintf(c, "s:%f      ", MPU_tick / 1000.0f);
 						drawString(60, 16, c, 9, SSD1306_WHITE,
 						SSD1306_BLACK);
 
@@ -499,7 +628,7 @@ int main(void) {
 			sprintf(c, "no 37 buffer");
 			drawString(0, 24, c, 9, SSD1306_WHITE, SSD1306_BLACK);
 		}
-
+		MotorUpdate();
 		display();
 
 		/* USER CODE END WHILE */

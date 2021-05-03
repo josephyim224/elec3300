@@ -74,13 +74,13 @@ void move(Direction dir) {
 	case MOTION_ROTATE_LEFT: {
 		x = 0;
 		y = 0;
-		w = 12;
+		w = 8;
 		break;
 	}
 	case MOTION_ROTATE_RIGHT: {
 		x = 0;
 		y = 0;
-		w = -12;
+		w = -8;
 		break;
 	}
 	case MOTION_STOP: {
