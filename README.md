@@ -5,19 +5,19 @@
 | --- | --- | --- | --- | --- |
 | - | - | design pcb | | v |
 | - | - | solder pcb | | v |
-| - | - | mech design | | car(v) |
-| 0 | 0 | button | button interrupt | |
-| 0 | 0 | led | led display | v |
+| - | - | mech design | | car(v), remote(v) |
+| 0 | 0 | button | button | remote(v) | |
+| 0 | 0 | led | led display | car(v), remote(v) |
 | 1 | 1 | motor driver | (car) pwm & direction control | v |
-| 1 | 2 | uart | communicate | |
-| 1 | 2 | i2c | communicate | car(v), remote(v) |
-| 1 | 3 | mpu6050 (i2c) | port and simplify Adafruit version | car(v) |
-| 2 | 4 | ssd1306 lcd (i2c) | display line and text (opt) | car(v), remote(v) |
-| 3 | 2 | ws2812b RGB led | display R/G/B first, either bitbang or spi (opt) | car(v), remote(v) |
-| 4 | 1 | vibration motor | (remote) pwm output | |
-| 4 | 2 | 24c02 eeprom (i2c) | read and write data | |
+| 1 | 2 | uart | communicate | car(v), remote(v) |
+| 1 | 2 | i2c | communicate | car(v hardware), remote(v software) |
+| 1 | 3 | mpu6050 (i2c) | port and simplify Adafruit version | car(v), remote(v) |
+| 2 | 4 | ssd1306 lcd (i2c) | display line and text | car(v), remote(v) |
+| 3 | 2 | ws2812b RGB led | display R/G/B | car(v), remote(x) |
+| 4 | 1 | vibration motor | (remote) pwm output | x |
+| 4 | 2 | 24c02 eeprom (i2c) | read and write data | x |
 | 4 | ? | encoder | (car) encoder counter | v |
-| 5 | 4 | gy530 TOF (i2c) | get distance | |
+| 5 | 4 | gy530 TOF (i2c) | get distance | x |
 
 
 ## car_hw
