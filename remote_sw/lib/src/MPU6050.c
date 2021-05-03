@@ -41,7 +41,7 @@ void mpu6050_write(uint8_t addr, uint8_t *d, uint8_t n)
 
 void mpu6050_delay(uint8_t delay)
 {
-	uint16_t nCount = delay * 100;
+	uint16_t nCount = delay * 200;
 	while (nCount != 0)
 		nCount--;
 }
