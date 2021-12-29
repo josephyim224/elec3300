@@ -22,7 +22,7 @@
 
 ## car_hw
 
-- see output/schematic.pdf
+- see [schematic.pdf](car_hw/output/schematic.pdf)
 
 ## car_sw
 
@@ -34,7 +34,7 @@
 
 ## remote_hw
 
-- see output/schematic.pdf
+- see [schematic.pdf](remote_hw/output/schematic.pdf)
 
 ## remote_sw
 
