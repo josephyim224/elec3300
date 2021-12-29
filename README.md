@@ -50,3 +50,16 @@
 ## remote_mech
 
 - see output/schematic.pdf
+
+## images
+![](final_report/car_top.jpg)
+*Car Top*
+
+![](final_report/car_bottom.jpg)
+*Car Bottom*
+
+![](final_report/remote_top.jpg)
+*Remote Top*
+
+![](final_report/remote_with_case.jpg)
+*Remote With Case*
