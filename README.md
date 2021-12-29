@@ -17,13 +17,13 @@ This project builds an omni wheel car with a bluetooth remote controller. The om
 
 ### 3D Print Components
 
-![](img/car_mech_motorMount.jpg)
+![](img/car_mech_motorMount.png)
 *Car Motor Mount*
 
-![](img/car_mech_shaft_a.jpg)
+![](img/car_mech_shaft_a.png)
 *Car Shaft A*
 
-![](img/car_mech_shaft_b.jpg)
+![](img/car_mech_shaft_b.png)
 *Car Shaft B*
 
 ### Software
@@ -46,10 +46,10 @@ This project builds an omni wheel car with a bluetooth remote controller. The om
 
 ### 3D Print Components
 
-![](img/remote_mech_case.jpg)
+![](img/remote_mech_case.png)
 *Remote Case*
 
-## Software
+### Software
 
 Setup:
 1. `sudo apt-get install libusb-1.0-0-dev sdcc -y`
